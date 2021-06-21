@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -61,13 +63,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     long restTime = (SystemClock.elapsedRealtime() - mRestTime.getBase()) / 1000;
                     long exerTime = ((SystemClock.elapsedRealtime() - mExerciseStart.getBase() ) / 1000) - restTime;
 
+                    Date date = new Date();
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+                    String nowTime = simpleDateFormat.format(date);
+
                     String startTIme = viewTime(exerTime);
                     String endTIme = viewTime(restTime);
 
-                    record += "                  " + (exerciseSet - 1) + "                                       "
-                            + startTIme + "                                      "
-                            + endTIme + "\n";
-
+                    record += "             " + (exerciseSet - 1) + "                        "
+                            + startTIme + "                       "
+                            + endTIme + "                        "  +   nowTime +   "\n";
                     textView.setText(textView.getText() + "\n" + record);
                     textView.setMovementMethod(new ScrollingMovementMethod());
                 }
