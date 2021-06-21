@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (exerciseSet > 1) {
                     String record = "";
 
-                    long exerTime = SystemClock.elapsedRealtime() - mRestTime.getBase();
-                    long restTime = SystemClock.elapsedRealtime() - mExerciseStart.getBase();
+                    long restTime = (SystemClock.elapsedRealtime() - mRestTime.getBase()) / 1000;
+                    long exerTime = ((SystemClock.elapsedRealtime() - mExerciseStart.getBase() ) / 1000) - restTime;
 
                     String startTIme = viewTime(exerTime);
                     String endTIme = viewTime(restTime);
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 exerciseStartButton.setVisibility(View.GONE);
                 restStartButton.setVisibility(View.VISIBLE);
+
 
                 break;
             case R.id.rest_start_btn:
