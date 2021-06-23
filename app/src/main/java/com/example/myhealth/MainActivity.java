@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Chronometer mExerciseStart, mRestTime;
     private Button exerciseStartButton;
     private Button restStartButton;
+    private Button stopButton;
 
     private int exerciseSet = 0;
     private ScrollView listView;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
+        stopButton = findViewById(R.id.stop_btn);
         Button resetButton = findViewById(R.id.reset_btn);
 
         mExerciseStart = findViewById(R.id.exercise_time);
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         exerciseStartButton.setOnClickListener(this);
         restStartButton.setOnClickListener(this);
+        stopButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
     }
 
@@ -118,8 +121,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 restStartButton.setVisibility(View.GONE);
                 exerciseStartButton.setVisibility(View.VISIBLE);
                 textView.setText("");
-
                 break;
+
+            case R.id.stop_btn:
+                mExerciseStart.stop();
+                mRestTime.stop();
 
         }
     }
