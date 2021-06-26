@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int exerciseSet = 0;
     private ScrollView listView;
     private TextView textView;
+    private String gitTest;
 
     ArrayList<Set> items;
 
