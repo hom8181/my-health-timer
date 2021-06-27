@@ -17,8 +17,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="정지"
+            android:text="일시중지"
             android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            tools:ignore="HardcodedText"
+            android:layout_marginRight="10dp">
+        </Button>
+
+        <Button
+            android:id="@+id/stop_end_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="다시시작"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
             tools:ignore="HardcodedText"
             android:layout_marginRight="10dp">
         </Button>
