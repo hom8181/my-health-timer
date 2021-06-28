@@ -19,7 +19,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Chronometer mExerciseStart, mRestTime;
+    private Chronometer mExerciseTime, mRestTime, mStopTime;
     private ExerciseStatus currentExerciseStatus;
 
     private Button exerciseStartButton;
@@ -29,6 +29,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private int exerciseSet = 0;
     private TextView textView;
+    private TextView stopMessage;
+
+    private long stopTime;
+    private long exerciseStopTime;
+    private long restStopTime;
+
+    private StopType stopType = StopType.NORMAL;
 
     ArrayList<Set> items;
 
@@ -43,12 +50,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stopEndButton = findViewById(R.id.stop_end_btn);
         Button resetButton = findViewById(R.id.reset_btn);
 
-        mExerciseStart = findViewById(R.id.exercise_time);
+        mExerciseTime = findViewById(R.id.exercise_time);
         mRestTime = findViewById(R.id.rest_time);
+        mStopTime = findViewById(R.id.calculate_stop_time);
 
         ScrollView listView = findViewById(R.id.set_list);
 
         textView = findViewById(R.id.scroll_text);
+        stopMessage = findViewById(R.id.stop_message);
 
         exerciseStartButton.setOnClickListener(this);
         restStartButton.setOnClickListener(this);
@@ -65,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 currentExerciseStatus = ExerciseStatus.EXERCISE;
                 if (exerciseSet == 0) {
                     stopButton.setVisibility(View.VISIBLE);
-                    restStartButton.setText( "1세트 운동 완료 & 휴식 시작");
+                    restStartButton.setText("1세트 운동 완료 & 휴식 시작");
                 }
 
                 exerciseSet++;
@@ -74,7 +83,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String record = "";
 
                     long restTime = (SystemClock.elapsedRealtime() - mRestTime.getBase()) / 1000;
-                    long exerTime = ((SystemClock.elapsedRealtime() - mExerciseStart.getBase()) / 1000) - restTime;
+
+                    long exerTime;
+
+                    if (restStopTime > 0) {
+                        System.out.println("운동시간 - 쉬는 시간" + (((SystemClock.elapsedRealtime() - mExerciseTime.getBase()) / 1000) - restTime));
+                        System.out.println("운동 스탑 시간" + exerciseStopTime / 1000);
+                        System.out.println("휴식 스탑 시간" + restStopTime / 1000);
+                        exerTime = ((SystemClock.elapsedRealtime() - mExerciseTime.getBase()) / 1000) - restTime - (restStopTime / 1000);
+                    } else {
+                        exerTime = ((SystemClock.elapsedRealtime() - mExerciseTime.getBase()) / 1000) - restTime;
+                    }
+
 
                     Date date = new Date();
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
@@ -92,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     restStartButton.setText(exerciseSet + "세트 운동 완료 & 휴식 시작");
                 }
 
-                mExerciseStart.setBase(SystemClock.elapsedRealtime());
-                mExerciseStart.start();
+                mExerciseTime.setBase(SystemClock.elapsedRealtime());
+                mExerciseTime.start();
 
                 mRestTime.setBase(SystemClock.elapsedRealtime());
                 mRestTime.stop();
@@ -108,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     exerciseStartButton.setText("휴식 종료  " + (exerciseSet + 1) + "세트 운동 시작");
                 }
 
-                mExerciseStart.stop();
+                mExerciseTime.stop();
 
                 mRestTime.setBase(SystemClock.elapsedRealtime());
                 mRestTime.start();
@@ -118,26 +138,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.stop_btn:
-                mExerciseStart.stop();
+                stopTime = 0;
+
+                mStopTime.setBase(SystemClock.elapsedRealtime());
+                mStopTime.start();
+
+                stopMessage.setVisibility(View.VISIBLE);
+
+                mExerciseTime.stop();
                 mRestTime.stop();
                 stopButton.setVisibility(View.GONE);
                 stopEndButton.setVisibility(View.VISIBLE);
+
+                if (currentExerciseStatus == ExerciseStatus.EXERCISE) {
+                    restStartButton.setVisibility(View.GONE);
+                } else {
+                    exerciseStartButton.setVisibility(View.GONE);
+                }
                 break;
 
             case R.id.stop_end_btn:
+                stopTime = SystemClock.elapsedRealtime() - mStopTime.getBase();
+
                 if (currentExerciseStatus == ExerciseStatus.EXERCISE) {
-                    mExerciseStart.start();
-                }
-                else {
+                    exerciseStopTime = stopTime;
+                    stopType = StopType.EXERCISE;
+
+                    long exerTime = ((SystemClock.elapsedRealtime() - stopTime) - mExerciseTime.getBase()) / 1000;
+                    mExerciseTime.setBase(SystemClock.elapsedRealtime() - (exerTime * 1000));
+
+                    mExerciseTime.start();
+                    restStartButton.setVisibility(View.VISIBLE);
+                } else {
+                    restStopTime = stopTime;
+                    stopType = StopType.REST;
+
+                    long restTime = ((SystemClock.elapsedRealtime() - stopTime) - mRestTime.getBase()) / 1000;
+                    mRestTime.setBase(SystemClock.elapsedRealtime() - (restTime * 1000));
+
                     mRestTime.start();
+                    exerciseStartButton.setVisibility(View.VISIBLE);
                 }
                 stopButton.setVisibility(View.VISIBLE);
                 stopEndButton.setVisibility(View.GONE);
+                stopMessage.setVisibility(View.GONE);
                 break;
 
             case R.id.reset_btn:
-                mExerciseStart.setBase(SystemClock.elapsedRealtime());
-                mExerciseStart.stop();
+                mStopTime.setBase(SystemClock.elapsedRealtime());
+                mStopTime.stop();
+
+                mExerciseTime.setBase(SystemClock.elapsedRealtime());
+                mExerciseTime.stop();
 
                 mRestTime.setBase(SystemClock.elapsedRealtime());
                 mRestTime.stop();
@@ -145,10 +197,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 exerciseSet = 0;
                 exerciseStartButton.setText("1세트 운동 시작");
 
-                restStartButton.setVisibility(View.GONE);
                 exerciseStartButton.setVisibility(View.VISIBLE);
+                restStartButton.setVisibility(View.GONE);
                 stopButton.setVisibility(View.GONE);
                 stopEndButton.setVisibility(View.GONE);
+                stopMessage.setVisibility(View.GONE);
                 textView.setText("");
                 break;
         }
@@ -180,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onDestroy() {
         super.onDestroy();
-        mExerciseStart.stop();
+        mExerciseTime.stop();
         mRestTime.stop();
     }
 
