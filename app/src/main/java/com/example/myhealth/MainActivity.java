@@ -66,19 +66,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (exerciseSet > 1) {
                     String record = "";
 
-                    long restTime = (SystemClock.elapsedRealtime() - mRestTime.getBase()) / 1000;
-
+                    long restTime = mathFloorTime(SystemClock.elapsedRealtime() - mRestTime.getBase());
                     long exerTime;
 
-                    if (restStopTime > 0) {
-                        System.out.println("운동시간 - 쉬는 시간" + (((SystemClock.elapsedRealtime() - mExerciseTime.getBase()) / 1000) - restTime));
-                        System.out.println("운동 스탑 시간" + exerciseStopTime / 1000);
-                        System.out.println("휴식 스탑 시간" + restStopTime / 1000);
-                        exerTime = ((SystemClock.elapsedRealtime() - mExerciseTime.getBase()) / 1000) - restTime - (restStopTime / 1000);
-                    } else {
-                        exerTime = ((SystemClock.elapsedRealtime() - mExerciseTime.getBase()) / 1000) - restTime;
-                    }
-
+                    exerTime = mathFloorTime((SystemClock.elapsedRealtime() - mExerciseTime.getBase()));
+                    exerTime = exerTime - restTime;
 
                     Date date = new Date();
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
@@ -140,6 +132,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * 측정시간을 HH:mm 형태의 String으로 나타내 주는 method
+     *
+     * @param time 측정시간
+     * @return String
+     */
     private String viewTime(long time) {
         String record = "";
         long minute = time / 60;
@@ -160,6 +158,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return record;
     }
 
+
+    /**
+     * 측정시간을 내림 후 second로 바꾸어주는 method
+     *
+     * @param time 측정시간
+     * @return long
+     */
+    private long mathFloorTime(long time) {
+        final double millisecondToSecond = 1000.0;
+        return (long) Math.floor(time / millisecondToSecond);
+    }
+
+    // 앱 종료시 Chronometer stop
     public void onDestroy() {
         super.onDestroy();
         mExerciseTime.stop();
