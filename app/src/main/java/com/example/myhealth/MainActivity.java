@@ -1,21 +1,18 @@
 package com.example.myhealth;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -32,13 +29,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textView;
     private TextView stopMessage;
 
-    private long stopTime;
     private long exerciseStopTime;
     private long restStopTime;
-
-    private StopType stopType = StopType.NORMAL;
-
-    ArrayList<Set> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +52,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRestTime = findViewById(R.id.rest_time);
         mStopTime = findViewById(R.id.calculate_stop_time);
 
-        ScrollView listView = findViewById(R.id.set_list);
-
         textView = findViewById(R.id.scroll_text);
         stopMessage = findViewById(R.id.stop_message);
 
@@ -75,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
     @Override
     public void onClick(View view) {
+        StopType stopType = StopType.NORMAL;
         switch (view.getId()) {
             case R.id.exercise_start_btn:
                 currentExerciseStatus = ExerciseStatus.EXERCISE;
@@ -144,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.stop_btn:
-                stopTime = 0;
+                long stopTime = 0;
 
                 mStopTime.setBase(SystemClock.elapsedRealtime());
                 mStopTime.start();
@@ -231,10 +222,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             record = "0" + minute + ":" + "0" + second;
         }
         return record;
-    }
-
-    public Context getContext() {
-        return this;
     }
 
     public void onDestroy() {
