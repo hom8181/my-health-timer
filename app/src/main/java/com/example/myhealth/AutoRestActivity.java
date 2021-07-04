@@ -1,7 +1,6 @@
 package com.example.myhealth;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.method.ScrollingMovementMethod;
@@ -16,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class AutoRestActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Chronometer mExerciseTime, mRestTime, mStopTime;
 
@@ -35,12 +34,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         assert actionBar != null;
         actionBar.hide();
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.auto_rest_activity);
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
         Button resetButton = findViewById(R.id.reset_btn);
-        Button moveRestActivityButton = findViewById(R.id.move_auto_rest_btn);
 
         mExerciseTime = findViewById(R.id.exercise_time);
         mRestTime = findViewById(R.id.rest_time);
@@ -53,10 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         restStartButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
-        moveRestActivityButton.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AutoRestActivity.class);
-            startActivity(intent);
-        });
     }
 
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
