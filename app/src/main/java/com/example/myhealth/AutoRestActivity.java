@@ -1,8 +1,8 @@
 package com.example.myhealth;
 
 import android.annotation.SuppressLint;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
@@ -12,12 +12,15 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Calendar;
+
 public class AutoRestActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Chronometer mExerciseTime, mStopTime;
 
     private Button exerciseStartButton;
     private Button restStartButton;
+    private Button restTimeSettingButton;
 
     private int exerciseSet = 0;
     private TextView textView;
@@ -37,6 +40,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
+        restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
         Button resetButton = findViewById(R.id.reset_btn);
 
         mExerciseTime = findViewById(R.id.exercise_time);
@@ -48,6 +52,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
         exerciseStartButton.setOnClickListener(this);
         restStartButton.setOnClickListener(this);
+        restTimeSettingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
         new CountDownTimer(20000, 1000) {
@@ -84,6 +89,18 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 restStartButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.rest_start_btn:
+
+                break;
+            case R.id.rest_time_setting_btn:
+                final Calendar c = Calendar.getInstance();
+                int mHour = c.get(Calendar.HOUR_OF_DAY);
+                int mMinute = c.get(Calendar.MINUTE);
+
+                // Launch Time Picker Dialog
+                TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                        (view1, hourOfDay, minute) ->
+                                mRestTime.setText(hourOfDay + ":" + minute), mHour, mMinute, false);
+                timePickerDialog.show();
 
                 break;
 
