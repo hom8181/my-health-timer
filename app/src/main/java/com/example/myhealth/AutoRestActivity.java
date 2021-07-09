@@ -1,18 +1,19 @@
 package com.example.myhealth;
 
 import android.annotation.SuppressLint;
-import android.app.TimePickerDialog;
+import android.app.Dialog;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.Calendar;
 
 public class AutoRestActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -20,13 +21,18 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
     private Button exerciseStartButton;
     private Button restStartButton;
-    private Button restTimeSettingButton;
 
     private int exerciseSet = 0;
+
     private TextView textView;
     private TextView stopMessage;
 
     private TextView mRestTime;
+
+    private int minutePick = 1;
+    private int secondPick = 30;
+
+    private int restMillisecond = (minutePick * 60 + secondPick) * 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +46,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
-        restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
+        Button restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
         Button resetButton = findViewById(R.id.reset_btn);
 
         mExerciseTime = findViewById(R.id.exercise_time);
@@ -55,25 +61,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         restTimeSettingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
-        new CountDownTimer(20000, 1000) {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onTick(long millisecond) {
-                long second = millisecond / 1000;
-                mRestTime.setText(viewTime(second));
-
-                // 초 후 운동이 시작 됩니다 && 부저
-                if (millisecond / 1000 <= 3) {
-
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                // 자동으로 exercise 시작
-
-            }
-        }.start();
 
     }
 
@@ -89,18 +76,74 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 restStartButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.rest_start_btn:
+                mExerciseTime.stop();
+
+                new CountDownTimer(restMillisecond, 1000) {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onTick(long millisecond) {
+                        long second = millisecond / 1000;
+                        mRestTime.setText(viewTime(second));
+
+                        // 초 후 운동이 시작 됩니다 && 부저
+                        if (millisecond / 1000 <= 3) {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        // 자동으로 exercise 시작
+
+                    }
+                }.start();
 
                 break;
             case R.id.rest_time_setting_btn:
-                final Calendar c = Calendar.getInstance();
-                int mHour = c.get(Calendar.HOUR_OF_DAY);
-                int mMinute = c.get(Calendar.MINUTE);
+                Dialog numberPickerDialog = new Dialog(this);
+                numberPickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                numberPickerDialog.setContentView(R.layout.dialog_timepicker);
 
-                // Launch Time Picker Dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                        (view1, hourOfDay, minute) ->
-                                mRestTime.setText(hourOfDay + ":" + minute), mHour, mMinute, false);
-                timePickerDialog.show();
+                Button selectButton = (Button) numberPickerDialog.findViewById(R.id.select_btn);
+                Button cancelButton = (Button) numberPickerDialog.findViewById(R.id.cancel_btn);
+
+                NumberPicker minutePicker = (NumberPicker) numberPickerDialog.findViewById(R.id.minute_picker);
+                minutePicker.setMinValue(0);
+                minutePicker.setMaxValue(59);
+                minutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                minutePicker.setWrapSelectorWheel(false);
+                minutePicker.setValue(minutePick);
+                minutePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+                });
+
+                NumberPicker secondPicker = (NumberPicker) numberPickerDialog.findViewById(R.id.second_picker);
+                secondPicker.setMinValue(0);
+                secondPicker.setMaxValue(59);
+                secondPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+                secondPicker.setWrapSelectorWheel(false);
+                secondPicker.setValue(secondPick);
+                secondPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+                });
+
+                numberPickerDialog.show();
+
+                selectButton.setOnClickListener(v -> {
+                    int minute = minutePicker.getValue();
+                    int second = secondPicker.getValue();
+
+                    minutePick = minute;
+                    secondPick = second;
+
+                    int totalSecond = minute * 60 + second;
+                    restMillisecond = totalSecond * 1000;
+                    String viewTime = Utils.viewTime(totalSecond);
+
+                    TextView textView = findViewById(R.id.rest_time);
+                    textView.setText(viewTime);
+
+                    numberPickerDialog.dismiss();
+                });
+                cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
 
                 break;
 
