@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
                     String nowTime = simpleDateFormat.format(date);
 
-                    String startTIme = viewTime(exerTime);
-                    String endTIme = viewTime(restTime);
+                    String startTIme = Utils.viewTime(exerTime);
+                    String endTIme = Utils.viewTime(restTime);
 
                     record += "             " + (exerciseSet - 1) + "                        "
                             + startTIme + "                       "
@@ -137,32 +137,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 textView.setText("");
                 break;
         }
-    }
-
-    /**
-     * 측정시간을 HH:mm 형태의 String으로 나타내 주는 method
-     *
-     * @param time 측정시간
-     * @return String
-     */
-    private String viewTime(long time) {
-        String record = "";
-        long minute = time / 60;
-        long second = time % 60;
-
-        if (minute >= 10 && second >= 10) {
-            record = minute + ":" + second;
-        }
-        if (minute < 10 && second >= 10) {
-            record = "0" + minute + ":" + second;
-        }
-        if (minute >= 10 && second < 10) {
-            record = minute + ":" + "0" + second;
-        }
-        if (minute < 10 && second < 10) {
-            record = "0" + minute + ":" + "0" + second;
-        }
-        return record;
     }
 
 
