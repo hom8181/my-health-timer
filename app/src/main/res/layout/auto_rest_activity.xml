@@ -127,7 +127,7 @@
             android:id="@+id/rest_ing_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="휴식 중.. \n0초가 되면 자동으로 운동이 시작됩니다. "
+            android:text="휴식 중.. \n휴식 후 자동으로 운동이 시작됩니다."
             android:width="250dp"
             android:layout_gravity="center"
             android:gravity="center"

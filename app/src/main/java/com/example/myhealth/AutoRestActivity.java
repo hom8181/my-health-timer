@@ -39,7 +39,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private Toast originalToast;
     private Toast newToast;
 
-    private boolean toastCancel = true;
+    private boolean firstToast = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +91,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 restStartButton.setVisibility(View.GONE);
                 restIngButton.setVisibility(View.VISIBLE);
 
-
-                toastCancel = true;
+                firstToast = true;
 
                 new CountDownTimer(restMillisecond, 1000) {
                     @SuppressLint("SetTextI18n")
@@ -103,24 +102,30 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                         // 초 후 운동이 시작 됩니다 && 부저
                         if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
-                            System.out.println(toastCancel);
+                            System.out.println(firstToast);
 
-                            if (toastCancel) {
-                                originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_LONG);
+                            if (firstToast) {
+                                // 처음 띄우는 toast 일 경우 cancel이 없기 때문에 처음 toast를 띄우기만 함
+                                originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
                                 originalToast.show();
                             } else {
+                                // 원래의 toast를 cancel하고 새로 toast를 띄움
                                 originalToast.cancel();
-                                newToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_LONG);
+                                newToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
                                 newToast.show();
-                            }
 
-                            toastCancel = false;
+                                originalToast = newToast;
+                            }
+                            firstToast = false;
                         }
                     }
 
                     @Override
                     public void onFinish() {
                         // 자동으로 exercise 시작
+                        originalToast.cancel();
+                        newToast = Toast.makeText(AutoRestActivity.this, "지금 바로 운동을 시작해주세요.", Toast.LENGTH_SHORT);
+                        newToast.show();
 
                     }
                 }.start();
