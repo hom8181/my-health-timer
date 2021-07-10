@@ -11,16 +11,18 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AutoRestActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Chronometer mExerciseTime, mStopTime;
+    private Chronometer mExerciseTime;
 
     private Button exerciseStartButton;
     private Button restStartButton;
+    private Button restIngButton;
 
     private int exerciseSet = 0;
 
@@ -29,10 +31,15 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
     private TextView mRestTime;
 
-    private int minutePick = 1;
-    private int secondPick = 30;
+    private int minutePick = 0;
+    private int secondPick = 5;
 
     private int restMillisecond = (minutePick * 60 + secondPick) * 1000;
+
+    private Toast originalToast;
+    private Toast newToast;
+
+    private boolean toastCancel = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +53,11 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
+        restIngButton = findViewById(R.id.rest_ing_btn);
         Button restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
         Button resetButton = findViewById(R.id.reset_btn);
 
         mExerciseTime = findViewById(R.id.exercise_time);
-        mStopTime = findViewById(R.id.calculate_stop_time);
 
         textView = findViewById(R.id.scroll_text);
         mRestTime = findViewById(R.id.rest_time);
@@ -61,6 +68,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         restTimeSettingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
+        mRestTime.setText(viewTime(restMillisecond / 1000));
 
     }
 
@@ -74,9 +82,17 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                 exerciseStartButton.setVisibility(View.GONE);
                 restStartButton.setVisibility(View.VISIBLE);
+
+                exerciseSet++;
                 break;
             case R.id.rest_start_btn:
                 mExerciseTime.stop();
+
+                restStartButton.setVisibility(View.GONE);
+                restIngButton.setVisibility(View.VISIBLE);
+
+
+                toastCancel = true;
 
                 new CountDownTimer(restMillisecond, 1000) {
                     @SuppressLint("SetTextI18n")
@@ -86,8 +102,19 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                         mRestTime.setText(viewTime(second));
 
                         // 초 후 운동이 시작 됩니다 && 부저
-                        if (millisecond / 1000 <= 3) {
+                        if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
+                            System.out.println(toastCancel);
 
+                            if (toastCancel) {
+                                originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_LONG);
+                                originalToast.show();
+                            } else {
+                                originalToast.cancel();
+                                newToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_LONG);
+                                newToast.show();
+                            }
+
+                            toastCancel = false;
                         }
                     }
 
@@ -104,10 +131,10 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 numberPickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 numberPickerDialog.setContentView(R.layout.dialog_timepicker);
 
-                Button selectButton = (Button) numberPickerDialog.findViewById(R.id.select_btn);
-                Button cancelButton = (Button) numberPickerDialog.findViewById(R.id.cancel_btn);
+                Button selectButton = numberPickerDialog.findViewById(R.id.select_btn);
+                Button cancelButton = numberPickerDialog.findViewById(R.id.cancel_btn);
 
-                NumberPicker minutePicker = (NumberPicker) numberPickerDialog.findViewById(R.id.minute_picker);
+                NumberPicker minutePicker = numberPickerDialog.findViewById(R.id.minute_picker);
                 minutePicker.setMinValue(0);
                 minutePicker.setMaxValue(59);
                 minutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
@@ -116,7 +143,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 minutePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
                 });
 
-                NumberPicker secondPicker = (NumberPicker) numberPickerDialog.findViewById(R.id.second_picker);
+                NumberPicker secondPicker = numberPickerDialog.findViewById(R.id.second_picker);
                 secondPicker.setMinValue(0);
                 secondPicker.setMaxValue(59);
                 secondPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
@@ -146,11 +173,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
 
                 break;
-
             case R.id.reset_btn:
-                mStopTime.setBase(SystemClock.elapsedRealtime());
-                mStopTime.stop();
-
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.stop();
 

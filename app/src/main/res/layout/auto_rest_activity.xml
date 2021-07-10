@@ -65,20 +65,9 @@
                 android:gravity="center"
                 android:textColor="@color/red"
                 android:textSize="50sp"
-                android:text="01:30"
+                android:text="00:05"
                 tools:targetApi="24"
                 tools:ignore="HardcodedText" />
-
-            <Chronometer
-                android:id="@+id/calculate_stop_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/red"
-                android:visibility="gone"
-                android:textSize="50sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -124,14 +113,13 @@
             android:id="@+id/rest_start_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="휴식 중.. "
+            android:text="운동 완료 휴식 시작 "
             android:width="250dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_marginStart="15dp"
             tools:ignore="HardcodedText"
             android:visibility="gone"
-            android:backgroundTint="@color/red"
             android:layout_marginLeft="15dp">
         </Button>
 
@@ -139,12 +127,12 @@
             android:id="@+id/rest_ing_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="휴식 중.. "
+            android:text="휴식 중.. \n0초가 되면 자동으로 운동이 시작됩니다. "
             android:width="250dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_marginStart="15dp"
-            tools:ignore="HardcodedText"
+            tools:ignore="HardcodedText,UnusedAttribute"
             android:visibility="gone"
             android:backgroundTint="@color/red"
             android:layout_marginLeft="15dp">
