@@ -52,8 +52,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:layout_marginStart="15dp"
                 android:textColor="@color/green"
-                android:textSize="50sp"/>
+                android:textSize="50sp"
+                android:layout_marginLeft="15dp" />
 
             <TextView
                 android:id="@+id/rest_time"
@@ -113,7 +115,7 @@
             android:id="@+id/rest_start_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="운동 완료 휴식 시작 "
+            android:text="1세트 운동 완료 휴식 시작 "
             android:width="250dp"
             android:layout_gravity="center"
             android:gravity="center"

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class AutoRestActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Chronometer mExerciseTime;
@@ -23,6 +27,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private Button exerciseStartButton;
     private Button restStartButton;
     private Button restIngButton;
+    Button restTimeSettingButton;
 
     private int exerciseSet = 0;
 
@@ -34,7 +39,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private int minutePick = 0;
     private int secondPick = 5;
 
-    private int restMillisecond = (minutePick * 60 + secondPick) * 1000;
+    private long restMillisecond = (minutePick * 60 + secondPick) * 1000;
 
     private Toast originalToast;
     private Toast newToast;
@@ -54,7 +59,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
         restIngButton = findViewById(R.id.rest_ing_btn);
-        Button restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
+        restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
         Button resetButton = findViewById(R.id.reset_btn);
 
         mExerciseTime = findViewById(R.id.exercise_time);
@@ -68,7 +73,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         restTimeSettingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
-        mRestTime.setText(viewTime(restMillisecond / 1000));
+        mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
 
     }
 
@@ -81,9 +86,10 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 mExerciseTime.start();
 
                 exerciseStartButton.setVisibility(View.GONE);
+                restIngButton.setVisibility(View.GONE);
+                restTimeSettingButton.setVisibility(View.GONE);
                 restStartButton.setVisibility(View.VISIBLE);
 
-                exerciseSet++;
                 break;
             case R.id.rest_start_btn:
                 mExerciseTime.stop();
@@ -98,7 +104,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onTick(long millisecond) {
                         long second = millisecond / 1000;
-                        mRestTime.setText(viewTime(second));
+                        mRestTime.setText(Utils.viewTime(second));
 
                         // 초 후 운동이 시작 됩니다 && 부저
                         if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
@@ -106,12 +112,12 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                             if (firstToast) {
                                 // 처음 띄우는 toast 일 경우 cancel이 없기 때문에 처음 toast를 띄우기만 함
-                                originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
+                                originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
                                 originalToast.show();
                             } else {
                                 // 원래의 toast를 cancel하고 새로 toast를 띄움
                                 originalToast.cancel();
-                                newToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 +"초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
+                                newToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
                                 newToast.show();
 
                                 originalToast = newToast;
@@ -126,6 +132,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                         originalToast.cancel();
                         newToast = Toast.makeText(AutoRestActivity.this, "지금 바로 운동을 시작해주세요.", Toast.LENGTH_SHORT);
                         newToast.show();
+
+                        exerciseAutoStart();
 
                     }
                 }.start();
@@ -186,6 +194,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 exerciseStartButton.setText("1세트 운동 시작");
 
                 exerciseStartButton.setVisibility(View.VISIBLE);
+                restTimeSettingButton.setVisibility(View.VISIBLE);
                 restStartButton.setVisibility(View.GONE);
                 stopMessage.setVisibility(View.GONE);
                 textView.setText("");
@@ -193,30 +202,38 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    /**
-     * 측정시간을 HH:mm 형태의 String으로 나타내 주는 method
-     *
-     * @param seconds 측정시간
-     * @return String
-     */
-    private String viewTime(long seconds) {
-        String record = "";
-        long minute = seconds / 60;
-        long second = seconds % 60;
+    @SuppressLint("SetTextI18n")
+    private void exerciseAutoStart() {
+        exerciseSet++;
 
-        if (minute >= 10 && second >= 10) {
-            record = minute + ":" + second;
-        }
-        if (minute < 10 && second >= 10) {
-            record = "0" + minute + ":" + second;
-        }
-        if (minute >= 10 && second < 10) {
-            record = minute + ":" + "0" + second;
-        }
-        if (minute < 10 && second < 10) {
-            record = "0" + minute + ":" + "0" + second;
-        }
-        return record;
+        String record = "";
+        long exerTime;
+
+        exerTime = mathFloorTime((SystemClock.elapsedRealtime() - mExerciseTime.getBase() - restMillisecond));
+
+        Date date = new Date();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        String nowTime = simpleDateFormat.format(date);
+
+        String startTIme = Utils.viewTime(exerTime);
+        String endTIme = Utils.viewTime(restMillisecond / 1000);
+
+        record += "             " + (exerciseSet) + "                        "
+                + startTIme + "                       "
+                + endTIme + "                        " + nowTime + "\n";
+        textView.setText(textView.getText() + "\n" + record);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+
+        restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 자동 휴식 시작");
+
+        mExerciseTime.setBase(SystemClock.elapsedRealtime());
+        mExerciseTime.start();
+
+        exerciseStartButton.setVisibility(View.GONE);
+        restIngButton.setVisibility(View.GONE);
+        restStartButton.setVisibility(View.VISIBLE);
+
+        mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
     }
 
 
