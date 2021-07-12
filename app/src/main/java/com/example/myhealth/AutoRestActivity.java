@@ -44,6 +44,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private Toast originalToast;
     private Toast newToast;
 
+    private CountDownTimer countDownTimer;
+
     private boolean firstToast = true;
 
     @Override
@@ -99,7 +101,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                 firstToast = true;
 
-                new CountDownTimer(restMillisecond, 1000) {
+                countDownTimer = new CountDownTimer(restMillisecond, 1000) {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onTick(long millisecond) {
@@ -187,16 +189,21 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                 break;
             case R.id.reset_btn:
+                countDownTimer.cancel();
+
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.stop();
 
                 exerciseSet = 0;
                 exerciseStartButton.setText("1세트 운동 시작");
+                restStartButton.setText("1세트 운동 완료 & 자동 휴식 시작");
+
+                mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
 
                 exerciseStartButton.setVisibility(View.VISIBLE);
                 restTimeSettingButton.setVisibility(View.VISIBLE);
                 restStartButton.setVisibility(View.GONE);
-                stopMessage.setVisibility(View.GONE);
+                restIngButton.setVisibility(View.GONE);
                 textView.setText("");
                 break;
         }
