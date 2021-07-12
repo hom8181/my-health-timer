@@ -35,8 +35,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
     private TextView mRestTime;
 
-    private int minutePick = 0;
-    private int secondPick = 5;
+    private int minutePick = 1;
+    private int secondPick = 30;
 
     private long restMillisecond = (minutePick * 60 + secondPick) * 1000;
 
@@ -46,7 +46,9 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private CountDownTimer countDownTimer;
 
     private boolean firstToast = true;
+    private boolean setTimeAble = true;
 
+    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +77,12 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
         mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
 
+        mRestTime.setOnClickListener(view -> {
+            if (exerciseSet == 0 && setTimeAble) {
+                setRestTime();
+            }
+        });
+
     }
 
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
@@ -82,6 +90,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.exercise_start_btn:
+                setTimeAble = false;
+
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.start();
 
@@ -132,56 +142,12 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                         newToast.show();
 
                         exerciseAutoStart();
-
                     }
                 }.start();
 
                 break;
             case R.id.rest_time_setting_btn:
-                Dialog numberPickerDialog = new Dialog(this);
-                numberPickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                numberPickerDialog.setContentView(R.layout.dialog_timepicker);
-
-                Button selectButton = numberPickerDialog.findViewById(R.id.select_btn);
-                Button cancelButton = numberPickerDialog.findViewById(R.id.cancel_btn);
-
-                NumberPicker minutePicker = numberPickerDialog.findViewById(R.id.minute_picker);
-                minutePicker.setMinValue(0);
-                minutePicker.setMaxValue(59);
-                minutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                minutePicker.setWrapSelectorWheel(false);
-                minutePicker.setValue(minutePick);
-                minutePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                });
-
-                NumberPicker secondPicker = numberPickerDialog.findViewById(R.id.second_picker);
-                secondPicker.setMinValue(0);
-                secondPicker.setMaxValue(59);
-                secondPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                secondPicker.setWrapSelectorWheel(false);
-                secondPicker.setValue(secondPick);
-                secondPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
-                });
-
-                numberPickerDialog.show();
-
-                selectButton.setOnClickListener(v -> {
-                    int minute = minutePicker.getValue();
-                    int second = secondPicker.getValue();
-
-                    minutePick = minute;
-                    secondPick = second;
-
-                    int totalSecond = minute * 60 + second;
-                    restMillisecond = totalSecond * 1000;
-                    String viewTime = Utils.viewTime(totalSecond);
-
-                    TextView textView = findViewById(R.id.rest_time);
-                    textView.setText(viewTime);
-
-                    numberPickerDialog.dismiss();
-                });
-                cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
+                setRestTime();
 
                 break;
             case R.id.reset_btn:
@@ -191,6 +157,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 mExerciseTime.stop();
 
                 exerciseSet = 0;
+                setTimeAble = true;
                 exerciseStartButton.setText("1세트 운동 시작");
                 restStartButton.setText("1세트 운동 완료 & 자동 휴식 시작");
 
@@ -237,6 +204,53 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         restStartButton.setVisibility(View.VISIBLE);
 
         mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
+    }
+
+    private void setRestTime() {
+        Dialog numberPickerDialog = new Dialog(this);
+        numberPickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        numberPickerDialog.setContentView(R.layout.dialog_timepicker);
+
+        Button selectButton = numberPickerDialog.findViewById(R.id.select_btn);
+        Button cancelButton = numberPickerDialog.findViewById(R.id.cancel_btn);
+
+        NumberPicker minutePicker = numberPickerDialog.findViewById(R.id.minute_picker);
+        minutePicker.setMinValue(0);
+        minutePicker.setMaxValue(59);
+        minutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        minutePicker.setWrapSelectorWheel(false);
+        minutePicker.setValue(minutePick);
+        minutePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+        });
+
+        NumberPicker secondPicker = numberPickerDialog.findViewById(R.id.second_picker);
+        secondPicker.setMinValue(0);
+        secondPicker.setMaxValue(59);
+        secondPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        secondPicker.setWrapSelectorWheel(false);
+        secondPicker.setValue(secondPick);
+        secondPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+        });
+
+        numberPickerDialog.show();
+
+        selectButton.setOnClickListener(v -> {
+            int minute = minutePicker.getValue();
+            int second = secondPicker.getValue();
+
+            minutePick = minute;
+            secondPick = second;
+
+            int totalSecond = minute * 60 + second;
+            restMillisecond = totalSecond * 1000;
+            String viewTime = Utils.viewTime(totalSecond);
+
+            TextView textView = findViewById(R.id.rest_time);
+            textView.setText(viewTime);
+
+            numberPickerDialog.dismiss();
+        });
+        cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
     }
 
 
