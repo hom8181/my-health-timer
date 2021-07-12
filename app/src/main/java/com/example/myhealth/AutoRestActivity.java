@@ -32,7 +32,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private int exerciseSet = 0;
 
     private TextView textView;
-    private TextView stopMessage;
 
     private TextView mRestTime;
 
@@ -68,7 +67,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
         textView = findViewById(R.id.scroll_text);
         mRestTime = findViewById(R.id.rest_time);
-        stopMessage = findViewById(R.id.stop_message);
 
         exerciseStartButton.setOnClickListener(this);
         restStartButton.setOnClickListener(this);
@@ -110,8 +108,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                         // 초 후 운동이 시작 됩니다 && 부저
                         if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
-                            System.out.println(firstToast);
-
                             if (firstToast) {
                                 // 처음 띄우는 toast 일 경우 cancel이 없기 때문에 처음 toast를 띄우기만 함
                                 originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
