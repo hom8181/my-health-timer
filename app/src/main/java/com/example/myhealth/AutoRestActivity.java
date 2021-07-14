@@ -179,7 +179,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         String record = "";
         long exerTime;
 
-        exerTime = mathFloorTime((SystemClock.elapsedRealtime() - mExerciseTime.getBase() - restMillisecond));
+        exerTime = Utils.mathFloorTime((SystemClock.elapsedRealtime() - mExerciseTime.getBase() - restMillisecond));
 
         Date date = new Date();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
@@ -253,17 +253,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
     }
 
-
-    /**
-     * 측정시간을 내림 후 second로 바꾸어주는 method
-     *
-     * @param time 측정시간
-     * @return long
-     */
-    private long mathFloorTime(long time) {
-        final double millisecondToSecond = 1000.0;
-        return (long) Math.floor(time / millisecondToSecond);
-    }
 
     // 앱 종료시 Chronometer stop
     public void onDestroy() {

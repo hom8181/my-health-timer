@@ -28,4 +28,15 @@ public class Utils {
         return record;
     }
 
+    /**
+     * 측정시간을 내림 후 second로 바꾸어주는 method
+     *
+     * @param time 측정시간
+     * @return long
+     */
+    public static long mathFloorTime(long time) {
+        final double millisecondToSecond = 1000.0;
+        return (long) Math.floor(time / millisecondToSecond);
+    }
+
 }

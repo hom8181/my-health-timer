@@ -18,24 +18,22 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Chronometer mExerciseTime, mRestTime, mStopTime;
+    private Chronometer mExerciseTime, mRestTime;
 
     private Button exerciseStartButton;
     private Button restStartButton;
 
     private int exerciseSet = 0;
     private TextView textView;
-    private TextView stopMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.hide();
-
-        setContentView(R.layout.activity_main);
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
@@ -44,15 +42,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mExerciseTime = findViewById(R.id.exercise_time);
         mRestTime = findViewById(R.id.rest_time);
-        mStopTime = findViewById(R.id.calculate_stop_time);
-
         textView = findViewById(R.id.scroll_text);
-        stopMessage = findViewById(R.id.stop_message);
 
         exerciseStartButton.setOnClickListener(this);
         restStartButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
+        // 자동 휴식 activity로 이동
         moveRestActivityButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, AutoRestActivity.class);
             startActivity(intent);
@@ -67,16 +63,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (exerciseSet == 0) {
                     restStartButton.setText("1세트 운동 완료 & 휴식 시작");
                 }
-
-                exerciseSet++;
-
-                if (exerciseSet > 1) {
+                if (exerciseSet > 0) {
                     String record = "";
 
-                    long restTime = mathFloorTime(SystemClock.elapsedRealtime() - mRestTime.getBase());
+                    long restTime = Utils.mathFloorTime(SystemClock.elapsedRealtime() - mRestTime.getBase());
                     long exerTime;
 
-                    exerTime = mathFloorTime((SystemClock.elapsedRealtime() - mExerciseTime.getBase()));
+                    exerTime = Utils.mathFloorTime((SystemClock.elapsedRealtime() - mExerciseTime.getBase()));
                     exerTime = exerTime - restTime;
 
                     Date date = new Date();
@@ -94,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     restStartButton.setText(exerciseSet + "세트 운동 완료 & 휴식 시작");
                 }
+
+                exerciseSet++;
 
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.start();
@@ -119,9 +114,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.reset_btn:
-                mStopTime.setBase(SystemClock.elapsedRealtime());
-                mStopTime.stop();
-
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.stop();
 
@@ -133,22 +125,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 exerciseStartButton.setVisibility(View.VISIBLE);
                 restStartButton.setVisibility(View.GONE);
-                stopMessage.setVisibility(View.GONE);
                 textView.setText("");
                 break;
         }
-    }
-
-
-    /**
-     * 측정시간을 내림 후 second로 바꾸어주는 method
-     *
-     * @param time 측정시간
-     * @return long
-     */
-    private long mathFloorTime(long time) {
-        final double millisecondToSecond = 1000.0;
-        return (long) Math.floor(time / millisecondToSecond);
     }
 
     // 앱 종료시 Chronometer stop
