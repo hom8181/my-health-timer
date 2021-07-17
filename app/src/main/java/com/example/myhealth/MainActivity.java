@@ -13,8 +13,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myhealth.domain.ExerciseSetDto;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -25,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private int exerciseSet = 0;
     private TextView textView;
+    private List<ExerciseSetDto> exerciseSetList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,15 +85,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String startTIme = Utils.viewTime(exerTime);
                     String endTIme = Utils.viewTime(restTime);
 
-                    record += "             " + (exerciseSet - 1) + "                        "
+                    // 해당 세트 운동 정보 저장
+                    ExerciseSetDto exerciseSetDto = new ExerciseSetDto();
+                    exerciseSetDto.setSet(exerciseSet);
+                    exerciseSetDto.setExerciseTime(startTIme);
+                    exerciseSetDto.setRestTime(endTIme);
+                    exerciseSetList.add(exerciseSetDto);
+
+                    // TODO set text hard cording to list
+                    System.out.println("List 사이즈 : " + exerciseSetList.size());
+                    System.out.println("SET : " + exerciseSetList.get(exerciseSet - 1).getSet());
+
+                    record += "             " + (exerciseSet) + "                        "
                             + startTIme + "                       "
                             + endTIme + "                        " + nowTime + "\n";
                     textView.setText(textView.getText() + "\n" + record);
                     textView.setMovementMethod(new ScrollingMovementMethod());
 
-                    restStartButton.setText(exerciseSet + "세트 운동 완료 & 휴식 시작");
+                    restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 휴식 시작");
                 }
-
                 exerciseSet++;
 
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
