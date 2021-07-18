@@ -10,4 +10,5 @@ public class ExerciseSetDto {
     private int set;
     private String exerciseTime;
     private String restTime;
+    private String nowTime;
 }

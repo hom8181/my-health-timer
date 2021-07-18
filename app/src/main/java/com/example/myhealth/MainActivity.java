@@ -4,11 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,9 +27,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button restStartButton;
 
     private int exerciseSet = 0;
-    private TextView textView;
-    private List<ExerciseSetDto> exerciseSetList = new ArrayList<>();
+    private final List<ExerciseSetDto> exerciseSetList = new ArrayList<>();
 
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mExerciseTime = findViewById(R.id.exercise_time);
         mRestTime = findViewById(R.id.rest_time);
-        textView = findViewById(R.id.scroll_text);
+
+        listView = findViewById(R.id.list);
 
         exerciseStartButton.setOnClickListener(this);
         restStartButton.setOnClickListener(this);
@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     restStartButton.setText("1세트 운동 완료 & 휴식 시작");
                 }
                 if (exerciseSet > 0) {
-                    String record = "";
-
                     long restTime = Utils.mathFloorTime(SystemClock.elapsedRealtime() - mRestTime.getBase());
                     long exerTime;
 
@@ -90,17 +88,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     exerciseSetDto.setSet(exerciseSet);
                     exerciseSetDto.setExerciseTime(startTIme);
                     exerciseSetDto.setRestTime(endTIme);
+                    exerciseSetDto.setNowTime(nowTime);
                     exerciseSetList.add(exerciseSetDto);
 
-                    // TODO set text hard cording to list
-                    System.out.println("List 사이즈 : " + exerciseSetList.size());
-                    System.out.println("SET : " + exerciseSetList.get(exerciseSet - 1).getSet());
-
-                    record += "             " + (exerciseSet) + "                        "
-                            + startTIme + "                       "
-                            + endTIme + "                        " + nowTime + "\n";
-                    textView.setText(textView.getText() + "\n" + record);
-                    textView.setMovementMethod(new ScrollingMovementMethod());
+                    SetAdapter setAdapter = new SetAdapter(this, exerciseSetList);
+                    listView.setAdapter(setAdapter);
 
                     restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 휴식 시작");
                 }
@@ -141,7 +133,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 exerciseStartButton.setVisibility(View.VISIBLE);
                 restStartButton.setVisibility(View.GONE);
-                textView.setText("");
+
+                listView.setAdapter(null);
+
+                exerciseSetList.clear();
                 break;
         }
     }

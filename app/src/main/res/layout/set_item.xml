@@ -39,6 +39,14 @@
             android:gravity="center"
             android:textColor="@color/red"
             tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/item_now_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
