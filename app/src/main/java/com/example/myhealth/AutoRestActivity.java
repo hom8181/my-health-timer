@@ -5,11 +5,11 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +17,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myhealth.domain.ExerciseSetDto;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AutoRestActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,11 +35,9 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
     private int exerciseSet = 0;
 
-    private TextView textView;
-
     private TextView mRestTime;
 
-    private int minutePick = 1;
+    private int minutePick = 0;
     private int secondPick = 30;
 
     private long restMillisecond = (minutePick * 60 + secondPick) * 1000;
@@ -47,6 +49,10 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
     private boolean firstToast = true;
     private boolean setTimeAble = true;
+
+    private final List<ExerciseSetDto> exerciseSetList = new ArrayList<>();
+
+    private ListView listView;
 
     @SuppressLint("CutPasteId")
     @Override
@@ -67,8 +73,9 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
         mExerciseTime = findViewById(R.id.exercise_time);
 
-        textView = findViewById(R.id.scroll_text);
         mRestTime = findViewById(R.id.rest_time);
+
+        listView = findViewById(R.id.list);
 
         exerciseStartButton.setOnClickListener(this);
         restStartButton.setOnClickListener(this);
@@ -167,7 +174,10 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 restTimeSettingButton.setVisibility(View.VISIBLE);
                 restStartButton.setVisibility(View.GONE);
                 restIngButton.setVisibility(View.GONE);
-                textView.setText("");
+
+                listView.setAdapter(null);
+
+                exerciseSetList.clear();
                 break;
         }
     }
@@ -176,7 +186,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private void exerciseAutoStart() {
         exerciseSet++;
 
-        String record = "";
         long exerTime;
 
         exerTime = Utils.mathFloorTime((SystemClock.elapsedRealtime() - mExerciseTime.getBase() - restMillisecond));
@@ -188,11 +197,16 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         String startTIme = Utils.viewTime(exerTime);
         String endTIme = Utils.viewTime(restMillisecond / 1000);
 
-        record += "             " + (exerciseSet) + "                        "
-                + startTIme + "                       "
-                + endTIme + "                        " + nowTime + "\n";
-        textView.setText(textView.getText() + "\n" + record);
-        textView.setMovementMethod(new ScrollingMovementMethod());
+        // 해당 세트 운동 정보 저장
+        ExerciseSetDto exerciseSetDto = new ExerciseSetDto();
+        exerciseSetDto.setSet(exerciseSet);
+        exerciseSetDto.setExerciseTime(startTIme);
+        exerciseSetDto.setRestTime(endTIme);
+        exerciseSetDto.setNowTime(nowTime);
+        exerciseSetList.add(exerciseSetDto);
+
+        SetAdapter setAdapter = new SetAdapter(this, exerciseSetList);
+        listView.setAdapter(setAdapter);
 
         restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 자동 휴식 시작");
 
