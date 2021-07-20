@@ -158,7 +158,9 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                 break;
             case R.id.reset_btn:
-                countDownTimer.cancel();
+                if (countDownTimer != null) {
+                    countDownTimer.cancel();
+                }
 
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.stop();
