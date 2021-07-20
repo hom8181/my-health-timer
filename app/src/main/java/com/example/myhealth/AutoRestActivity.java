@@ -2,6 +2,9 @@ package com.example.myhealth;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -38,7 +41,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private TextView mRestTime;
 
     private int minutePick = 0;
-    private int secondPick = 30;
+    private int secondPick = 5;
 
     private long restMillisecond = (minutePick * 60 + secondPick) * 1000;
 
@@ -130,6 +133,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                                 originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
                                 originalToast.show();
                             } else {
+
+
                                 // 원래의 toast를 cancel하고 새로 toast를 띄움
                                 originalToast.cancel();
                                 newToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
@@ -143,6 +148,10 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                     @Override
                     public void onFinish() {
+                        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+                        ringtone.play();
+
                         // 자동으로 exercise 시작
                         originalToast.cancel();
                         newToast = Toast.makeText(AutoRestActivity.this, "지금 바로 운동을 시작해주세요.", Toast.LENGTH_SHORT);
