@@ -17,8 +17,8 @@
 
         <NumberPicker
             android:id="@+id/minute_picker"
-            android:layout_width="70dp"
-            android:layout_height="150dp"
+            android:layout_width="100dp"
+            android:layout_height="200dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,8 +36,8 @@
 
         <NumberPicker
             android:id="@+id/second_picker"
-            android:layout_width="70dp"
-            android:layout_height="150dp"
+            android:layout_width="100dp"
+            android:layout_height="200dp"
             android:layout_marginStart="25dp"
             app:layout_constraintStart_toEndOf="@+id/minute_picker"
             app:layout_constraintTop_toTopOf="parent"
@@ -64,11 +64,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="45dp"
             android:background="@null"
             android:gravity="center"
             android:text="확인"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            tools:ignore="ButtonStyle,HardcodedText" />
+            tools:ignore="ButtonStyle,HardcodedText"
+            android:layout_marginLeft="45dp" />
 
         <Button
             android:id="@+id/cancel_btn"
