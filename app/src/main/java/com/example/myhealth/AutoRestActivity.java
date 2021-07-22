@@ -61,12 +61,13 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.auto_rest_activity);
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
-        actionBar.hide();
+        actionBar.setTitle("자동 휴식 모드");
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        setContentView(R.layout.auto_rest_activity);
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
