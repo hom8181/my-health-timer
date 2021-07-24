@@ -37,15 +37,20 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     private TextView mExerciseTime;
     private TextView mRestTime;
 
-    private int minutePick = 0;
-    private int secondPick = 5;
+    private int restMinutePick = 1;
+    private int restSecondPick = 0;
 
-    private long restMillisecond = (minutePick * 60 + secondPick) * 1000;
+    private int exerciseMinutePick = 1;
+    private int exerciseSecondPick = 0;
+
+    private long restMillisecond = (restMinutePick * 60 + restSecondPick) * 1000;
+    private long exerciseMillisecond = (exerciseMinutePick * 60 + exerciseSecondPick) * 1000;
 
     private Toast originalToast;
     private Toast newToast;
 
-    private CountDownTimer countDownTimer;
+    private CountDownTimer restCountDownTimer;
+    private CountDownTimer exerciseCountDownTimer;
 
     private boolean firstToast = true;
     private boolean setTimeAble = true;
@@ -84,8 +89,14 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         resetButton.setOnClickListener(this);
 
         mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
-
         mRestTime.setOnClickListener(view -> {
+            if (exerciseSet == 0 && setTimeAble) {
+                setRestTime();
+            }
+        });
+
+        mExerciseTime.setText(Utils.viewTime(restMillisecond / 1000));
+        mExerciseTime.setOnClickListener(view -> {
             if (exerciseSet == 0 && setTimeAble) {
                 setRestTime();
             }
@@ -112,7 +123,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
                 firstToast = true;
 
-                countDownTimer = new CountDownTimer(restMillisecond, 1000) {
+                restCountDownTimer = new CountDownTimer(restMillisecond, 1000) {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void onTick(long millisecond) {
@@ -160,8 +171,8 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
                 break;
             case R.id.reset_btn:
-                if (countDownTimer != null) {
-                    countDownTimer.cancel();
+                if (restCountDownTimer != null) {
+                    restCountDownTimer.cancel();
                 }
 
                 exerciseSet = 0;
@@ -224,32 +235,32 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         Button selectButton = numberPickerDialog.findViewById(R.id.select_btn);
         Button cancelButton = numberPickerDialog.findViewById(R.id.cancel_btn);
 
-        NumberPicker minutePicker = numberPickerDialog.findViewById(R.id.minute_picker);
-        minutePicker.setMinValue(0);
-        minutePicker.setMaxValue(59);
-        minutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        minutePicker.setWrapSelectorWheel(false);
-        minutePicker.setValue(minutePick);
-        minutePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+        NumberPicker restMinutePicker = numberPickerDialog.findViewById(R.id.minute_picker);
+        restMinutePicker.setMinValue(0);
+        restMinutePicker.setMaxValue(59);
+        restMinutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        restMinutePicker.setWrapSelectorWheel(false);
+        restMinutePicker.setValue(restMinutePick);
+        restMinutePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
         });
 
-        NumberPicker secondPicker = numberPickerDialog.findViewById(R.id.second_picker);
-        secondPicker.setMinValue(0);
-        secondPicker.setMaxValue(59);
-        secondPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        secondPicker.setWrapSelectorWheel(false);
-        secondPicker.setValue(secondPick);
-        secondPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+        NumberPicker restSecondPicker = numberPickerDialog.findViewById(R.id.second_picker);
+        restSecondPicker.setMinValue(0);
+        restSecondPicker.setMaxValue(59);
+        restSecondPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        restSecondPicker.setWrapSelectorWheel(false);
+        restSecondPicker.setValue(restSecondPick);
+        restSecondPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
         });
 
         numberPickerDialog.show();
 
         selectButton.setOnClickListener(v -> {
-            int minute = minutePicker.getValue();
-            int second = secondPicker.getValue();
+            int minute = restMinutePicker.getValue();
+            int second = restSecondPicker.getValue();
 
-            minutePick = minute;
-            secondPick = second;
+            restMinutePick = minute;
+            restSecondPick = second;
 
             int totalSecond = minute * 60 + second;
             restMillisecond = totalSecond * 1000;
