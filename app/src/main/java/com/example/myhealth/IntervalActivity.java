@@ -63,7 +63,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.auto_rest_activity);
+        setContentView(R.layout.interval_activity);
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -88,15 +88,15 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         restTimeSettingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
-        mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
-        mRestTime.setOnClickListener(view -> {
+        mExerciseTime.setText(Utils.viewTime(restMillisecond / 1000));
+        mExerciseTime.setOnClickListener(view -> {
             if (exerciseSet == 0 && setTimeAble) {
-                setRestTime();
+                setExerciseTime();
             }
         });
 
-        mExerciseTime.setText(Utils.viewTime(restMillisecond / 1000));
-        mExerciseTime.setOnClickListener(view -> {
+        mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
+        mRestTime.setOnClickListener(view -> {
             if (exerciseSet == 0 && setTimeAble) {
                 setRestTime();
             }
@@ -225,6 +225,53 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         restStartButton.setVisibility(View.VISIBLE);
 
         mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
+    }
+
+    private void setExerciseTime() {
+        Dialog numberPickerDialog = new Dialog(this);
+        numberPickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        numberPickerDialog.setContentView(R.layout.dialog_timepicker);
+
+        Button selectButton = numberPickerDialog.findViewById(R.id.select_btn);
+        Button cancelButton = numberPickerDialog.findViewById(R.id.cancel_btn);
+
+        NumberPicker exerciseMinutePicker = numberPickerDialog.findViewById(R.id.minute_picker);
+        exerciseMinutePicker.setMinValue(0);
+        exerciseMinutePicker.setMaxValue(59);
+        exerciseMinutePicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        exerciseMinutePicker.setWrapSelectorWheel(false);
+        exerciseMinutePicker.setValue(exerciseMinutePick);
+        exerciseMinutePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+        });
+
+        NumberPicker exerciseSecondPicker = numberPickerDialog.findViewById(R.id.second_picker);
+        exerciseSecondPicker.setMinValue(0);
+        exerciseSecondPicker.setMaxValue(59);
+        exerciseSecondPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        exerciseSecondPicker.setWrapSelectorWheel(false);
+        exerciseSecondPicker.setValue(exerciseSecondPick);
+        exerciseSecondPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+        });
+
+        numberPickerDialog.show();
+
+        selectButton.setOnClickListener(v -> {
+            int minute = exerciseMinutePicker.getValue();
+            int second = exerciseSecondPicker.getValue();
+
+            exerciseMinutePick = minute;
+            exerciseSecondPick = second;
+
+            int totalSecond = minute * 60 + second;
+            exerciseMillisecond = totalSecond * 1000;
+            String viewTime = Utils.viewTime(totalSecond);
+
+            TextView textView = findViewById(R.id.exercise_time);
+            textView.setText(viewTime);
+
+            numberPickerDialog.dismiss();
+        });
+        cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
     }
 
     private void setRestTime() {
