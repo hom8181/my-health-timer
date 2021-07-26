@@ -129,13 +129,13 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                         if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
                             if (firstToast) {
                                 // 처음 띄우는 toast 일 경우 cancel이 없기 때문에 처음 toast를 띄우기만 함
-                                originalToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
+                                originalToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 휴식이 시작됩니다.", Toast.LENGTH_SHORT);
                                 originalToast.show();
                             } else {
 
                                 // 원래의 toast를 cancel하고 새로 toast를 띄움
                                 originalToast.cancel();
-                                newToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
+                                newToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 휴식이 시작됩니다.", Toast.LENGTH_SHORT);
                                 newToast.show();
 
                                 originalToast = newToast;
@@ -152,10 +152,10 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
                         // 자동으로 exercise 시작
                         originalToast.cancel();
-                        newToast = Toast.makeText(IntervalActivity.this, "지금 바로 운동을 시작해주세요.", Toast.LENGTH_SHORT);
+                        newToast = Toast.makeText(IntervalActivity.this, "휴식 시간입니다.", Toast.LENGTH_SHORT);
                         newToast.show();
 
-                        exerciseAutoStart();
+                        restStart();
                     }
                 }.start();
 
@@ -224,7 +224,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
                 exerciseSet = 0;
                 setTimeAble = true;
-                exerciseStartButton.setText("1세트 운동 시작");
+                exerciseStartButton.setText("인터벌 운동 시작");
                 restStartButton.setText("1세트 운동 완료 & 자동 휴식 시작");
 
                 mExerciseTime.setText(Utils.viewTime(exerciseMillisecond / 1000));
@@ -240,6 +240,17 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 exerciseSetList.clear();
                 break;
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void restStart() {
+        restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 휴식 중..");
+
+        exerciseStartButton.setVisibility(View.GONE);
+        restIngButton.setVisibility(View.GONE);
+        restStartButton.setVisibility(View.VISIBLE);
+
+        mExerciseTime.setText(Utils.viewTime(restMillisecond / 1000));
     }
 
     @SuppressLint("SetTextI18n")
