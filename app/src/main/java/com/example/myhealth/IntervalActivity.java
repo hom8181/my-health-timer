@@ -37,11 +37,11 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     private TextView mExerciseTime;
     private TextView mRestTime;
 
-    private int restMinutePick = 1;
-    private int restSecondPick = 0;
+    private int restMinutePick = 0;
+    private int restSecondPick = 3;
 
-    private int exerciseMinutePick = 1;
-    private int exerciseSecondPick = 0;
+    private int exerciseMinutePick = 0;
+    private int exerciseSecondPick = 4;
 
     private long restMillisecond = (restMinutePick * 60 + restSecondPick) * 1000;
     private long exerciseMillisecond = (exerciseMinutePick * 60 + exerciseSecondPick) * 1000;
@@ -160,55 +160,6 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 }.start();
 
                 break;
-            case R.id.rest_start_btn:
-                restStartButton.setVisibility(View.GONE);
-                restIngButton.setVisibility(View.VISIBLE);
-
-                firstToast = true;
-
-                restCountDownTimer = new CountDownTimer(restMillisecond, 1000) {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onTick(long millisecond) {
-                        long second = millisecond / 1000;
-                        mRestTime.setText(Utils.viewTime(second));
-
-                        // 초 후 운동이 시작 됩니다 && 부저
-                        if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
-                            if (firstToast) {
-                                // 처음 띄우는 toast 일 경우 cancel이 없기 때문에 처음 toast를 띄우기만 함
-                                originalToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
-                                originalToast.show();
-                            } else {
-
-
-                                // 원래의 toast를 cancel하고 새로 toast를 띄움
-                                originalToast.cancel();
-                                newToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
-                                newToast.show();
-
-                                originalToast = newToast;
-                            }
-                            firstToast = false;
-                        }
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
-                        ringtone.play();
-
-                        // 자동으로 exercise 시작
-                        originalToast.cancel();
-                        newToast = Toast.makeText(IntervalActivity.this, "지금 바로 운동을 시작해주세요.", Toast.LENGTH_SHORT);
-                        newToast.show();
-
-                        exerciseAutoStart();
-                    }
-                }.start();
-
-                break;
             case R.id.rest_time_setting_btn:
                 setRestTime();
 
@@ -247,10 +198,57 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 휴식 중..");
 
         exerciseStartButton.setVisibility(View.GONE);
-        restIngButton.setVisibility(View.GONE);
-        restStartButton.setVisibility(View.VISIBLE);
+        restIngButton.setVisibility(View.VISIBLE);
+        restStartButton.setVisibility(View.GONE);
 
         mExerciseTime.setText(Utils.viewTime(restMillisecond / 1000));
+
+        restStartButton.setVisibility(View.VISIBLE);
+        restIngButton.setVisibility(View.GONE);
+
+        firstToast = true;
+
+        restCountDownTimer = new CountDownTimer(restMillisecond, 1000) {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onTick(long millisecond) {
+                long second = millisecond / 1000;
+                mRestTime.setText(Utils.viewTime(second));
+
+                // 초 후 운동이 시작 됩니다 && 부저
+                if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
+                    if (firstToast) {
+                        // 처음 띄우는 toast 일 경우 cancel이 없기 때문에 처음 toast를 띄우기만 함
+                        originalToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
+                        originalToast.show();
+                    } else {
+
+
+                        // 원래의 toast를 cancel하고 새로 toast를 띄움
+                        originalToast.cancel();
+                        newToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
+                        newToast.show();
+
+                        originalToast = newToast;
+                    }
+                    firstToast = false;
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+                ringtone.play();
+
+                // 자동으로 exercise 시작
+                originalToast.cancel();
+                newToast = Toast.makeText(IntervalActivity.this, "지금 바로 운동을 시작해주세요.", Toast.LENGTH_SHORT);
+                newToast.show();
+
+                exerciseAutoStart();
+            }
+        }.start();
     }
 
     @SuppressLint("SetTextI18n")
@@ -259,17 +257,68 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
         long exerTime;
 
+        exerciseStartButton.setVisibility(View.GONE);
+        restIngButton.setVisibility(View.GONE);
+        restTimeSettingButton.setVisibility(View.GONE);
+        restStartButton.setVisibility(View.VISIBLE);
+
+        firstToast = true;
+
+        exerciseCountDownTimer = new CountDownTimer(exerciseMillisecond, 1000) {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onTick(long millisecond) {
+                long second = millisecond / 1000;
+                mExerciseTime.setText(Utils.viewTime(second));
+
+                // 초 후 운동이 시작 됩니다 && 부저
+                if (millisecond / 1000 <= 3 && millisecond / 1000 != 0) {
+                    if (firstToast) {
+                        // 처음 띄우는 toast 일 경우 cancel이 없기 때문에 처음 toast를 띄우기만 함
+                        originalToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 휴식이 시작됩니다.", Toast.LENGTH_SHORT);
+                        originalToast.show();
+                    } else {
+
+                        // 원래의 toast를 cancel하고 새로 toast를 띄움
+                        originalToast.cancel();
+                        newToast = Toast.makeText(IntervalActivity.this, millisecond / 1000 + "초 후 휴식이 시작됩니다.", Toast.LENGTH_SHORT);
+                        newToast.show();
+
+                        originalToast = newToast;
+                    }
+                    firstToast = false;
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+                ringtone.play();
+
+                // 자동으로 exercise 시작
+                originalToast.cancel();
+                newToast = Toast.makeText(IntervalActivity.this, "휴식 시간입니다.", Toast.LENGTH_SHORT);
+                newToast.show();
+
+                restStart();
+            }
+        }.start();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void restAutoStart() {
         Date date = new Date();
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         String nowTime = simpleDateFormat.format(date);
 
-//        String startTIme = Utils.viewTime(exerTime);
+        String startTIme = Utils.viewTime(exerciseMillisecond / 1000);
         String endTIme = Utils.viewTime(restMillisecond / 1000);
 
         // 해당 세트 운동 정보 저장
         ExerciseSetDto exerciseSetDto = new ExerciseSetDto();
         exerciseSetDto.setSet(exerciseSet);
-//        exerciseSetDto.setExerciseTime(startTIme);
+        exerciseSetDto.setExerciseTime(startTIme);
         exerciseSetDto.setRestTime(endTIme);
         exerciseSetDto.setNowTime(nowTime);
         exerciseSetList.add(exerciseSetDto);
@@ -283,7 +332,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         restIngButton.setVisibility(View.GONE);
         restStartButton.setVisibility(View.VISIBLE);
 
-        mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
+        mExerciseTime.setText(Utils.viewTime(exerciseMillisecond / 1000));
     }
 
     private void setExerciseTime() {
