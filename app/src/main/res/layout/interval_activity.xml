@@ -99,7 +99,7 @@
         </Button>
 
         <Button
-            android:id="@+id/rest_start_btn"
+            android:id="@+id/exercise_ing_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="운동 중.. \n운동 후 자동으로 휴식이 시작됩니다."

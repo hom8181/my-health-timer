@@ -28,7 +28,7 @@ import java.util.List;
 public class IntervalActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button exerciseStartButton;
-    private Button restStartButton;
+    private Button exerciseIngButton;
     private Button restIngButton;
     Button restTimeSettingButton;
 
@@ -72,7 +72,8 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
-        restStartButton = findViewById(R.id.rest_start_btn);
+        exerciseIngButton = findViewById(R.id.exercise_ing_btn);
+
         restIngButton = findViewById(R.id.rest_ing_btn);
         restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
         Button resetButton = findViewById(R.id.reset_btn);
@@ -84,7 +85,6 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         listView = findViewById(R.id.list);
 
         exerciseStartButton.setOnClickListener(this);
-        restStartButton.setOnClickListener(this);
         restTimeSettingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
@@ -114,7 +114,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 exerciseStartButton.setVisibility(View.GONE);
                 restIngButton.setVisibility(View.GONE);
                 restTimeSettingButton.setVisibility(View.GONE);
-                restStartButton.setVisibility(View.VISIBLE);
+                exerciseIngButton.setVisibility(View.VISIBLE);
 
                 firstToast = true;
 
@@ -176,14 +176,14 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 exerciseSet = 0;
                 setTimeAble = true;
                 exerciseStartButton.setText("인터벌 운동 시작");
-                restStartButton.setText("1세트 운동 완료 & 자동 휴식 시작");
+                exerciseIngButton.setText("1세트 운동 완료 & 자동 휴식 시작");
 
                 mExerciseTime.setText(Utils.viewTime(exerciseMillisecond / 1000));
                 mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
 
                 exerciseStartButton.setVisibility(View.VISIBLE);
                 restTimeSettingButton.setVisibility(View.VISIBLE);
-                restStartButton.setVisibility(View.GONE);
+                exerciseIngButton.setVisibility(View.GONE);
                 restIngButton.setVisibility(View.GONE);
 
                 listView.setAdapter(null);
@@ -195,15 +195,15 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
     @SuppressLint("SetTextI18n")
     private void restStart() {
-        restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 휴식 중..");
+        exerciseIngButton.setText((exerciseSet + 1) + "세트 운동 완료 & 휴식 중..");
 
         exerciseStartButton.setVisibility(View.GONE);
         restIngButton.setVisibility(View.VISIBLE);
-        restStartButton.setVisibility(View.GONE);
+        exerciseIngButton.setVisibility(View.GONE);
 
         mExerciseTime.setText(Utils.viewTime(restMillisecond / 1000));
 
-        restStartButton.setVisibility(View.VISIBLE);
+        exerciseIngButton.setVisibility(View.VISIBLE);
         restIngButton.setVisibility(View.GONE);
 
         firstToast = true;
@@ -255,12 +255,12 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     private void exerciseAutoStart() {
         exerciseSet++;
 
-        long exerTime;
+        exerciseIngButton.setText((exerciseSet + 1) + "세트 운동 중..");
 
         exerciseStartButton.setVisibility(View.GONE);
         restIngButton.setVisibility(View.GONE);
         restTimeSettingButton.setVisibility(View.GONE);
-        restStartButton.setVisibility(View.VISIBLE);
+        exerciseIngButton.setVisibility(View.VISIBLE);
 
         firstToast = true;
 
@@ -326,11 +326,11 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         SetAdapter setAdapter = new SetAdapter(this, exerciseSetList);
         listView.setAdapter(setAdapter);
 
-        restStartButton.setText((exerciseSet + 1) + "세트 운동 완료 & 자동 휴식 시작");
+        exerciseIngButton.setText((exerciseSet + 1) + "세트 운동 완료 & 자동 휴식 시작");
 
         exerciseStartButton.setVisibility(View.GONE);
         restIngButton.setVisibility(View.GONE);
-        restStartButton.setVisibility(View.VISIBLE);
+        exerciseIngButton.setVisibility(View.VISIBLE);
 
         mExerciseTime.setText(Utils.viewTime(exerciseMillisecond / 1000));
     }
