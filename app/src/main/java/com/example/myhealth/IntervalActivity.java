@@ -264,6 +264,24 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
         firstToast = true;
 
+        Date date = new Date();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        String nowTime = simpleDateFormat.format(date);
+
+        String startTIme = Utils.viewTime(exerciseMillisecond / 1000);
+        String endTIme = Utils.viewTime(restMillisecond / 1000);
+
+        // 해당 세트 운동 정보 저장
+        ExerciseSetDto exerciseSetDto = new ExerciseSetDto();
+        exerciseSetDto.setSet(exerciseSet);
+        exerciseSetDto.setExerciseTime(startTIme);
+        exerciseSetDto.setRestTime(endTIme);
+        exerciseSetDto.setNowTime(nowTime);
+        exerciseSetList.add(exerciseSetDto);
+
+        SetAdapter setAdapter = new SetAdapter(this, exerciseSetList);
+        listView.setAdapter(setAdapter);
+
         exerciseCountDownTimer = new CountDownTimer(exerciseMillisecond, 1000) {
             @SuppressLint("SetTextI18n")
             @Override
@@ -304,35 +322,6 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 restStart();
             }
         }.start();
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void restAutoStart() {
-        Date date = new Date();
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-        String nowTime = simpleDateFormat.format(date);
-
-        String startTIme = Utils.viewTime(exerciseMillisecond / 1000);
-        String endTIme = Utils.viewTime(restMillisecond / 1000);
-
-        // 해당 세트 운동 정보 저장
-        ExerciseSetDto exerciseSetDto = new ExerciseSetDto();
-        exerciseSetDto.setSet(exerciseSet);
-        exerciseSetDto.setExerciseTime(startTIme);
-        exerciseSetDto.setRestTime(endTIme);
-        exerciseSetDto.setNowTime(nowTime);
-        exerciseSetList.add(exerciseSetDto);
-
-        SetAdapter setAdapter = new SetAdapter(this, exerciseSetList);
-        listView.setAdapter(setAdapter);
-
-        exerciseIngButton.setText((exerciseSet + 1) + "세트 운동 완료 & 자동 휴식 시작");
-
-        exerciseStartButton.setVisibility(View.GONE);
-        restIngButton.setVisibility(View.GONE);
-        exerciseIngButton.setVisibility(View.VISIBLE);
-
-        mExerciseTime.setText(Utils.viewTime(exerciseMillisecond / 1000));
     }
 
     private void setExerciseTime() {
