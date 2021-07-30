@@ -30,7 +30,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     private Button exerciseStartButton;
     private Button exerciseIngButton;
     private Button restIngButton;
-    Button restTimeSettingButton;
+    Button stopIntervalBtn;
 
     private int exerciseSet = 0;
 
@@ -75,7 +75,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         exerciseIngButton = findViewById(R.id.exercise_ing_btn);
 
         restIngButton = findViewById(R.id.rest_ing_btn);
-        restTimeSettingButton = findViewById(R.id.rest_time_setting_btn);
+        stopIntervalBtn = findViewById(R.id.stop_time_btn);
         Button resetButton = findViewById(R.id.reset_btn);
 
         mExerciseTime = findViewById(R.id.exercise_time);
@@ -85,7 +85,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         listView = findViewById(R.id.list);
 
         exerciseStartButton.setOnClickListener(this);
-        restTimeSettingButton.setOnClickListener(this);
+        stopIntervalBtn.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
         mExerciseTime.setText(Utils.viewTime(exerciseMillisecond / 1000));
@@ -113,7 +113,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
                 exerciseStartButton.setVisibility(View.GONE);
                 restIngButton.setVisibility(View.GONE);
-                restTimeSettingButton.setVisibility(View.GONE);
+                stopIntervalBtn.setVisibility(View.VISIBLE);
                 exerciseIngButton.setVisibility(View.VISIBLE);
 
                 firstToast = true;
@@ -182,7 +182,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
 
                 exerciseStartButton.setVisibility(View.VISIBLE);
-                restTimeSettingButton.setVisibility(View.VISIBLE);
+                stopIntervalBtn.setVisibility(View.GONE);
                 exerciseIngButton.setVisibility(View.GONE);
                 restIngButton.setVisibility(View.GONE);
 
@@ -259,7 +259,6 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
         exerciseStartButton.setVisibility(View.GONE);
         restIngButton.setVisibility(View.GONE);
-        restTimeSettingButton.setVisibility(View.GONE);
         exerciseIngButton.setVisibility(View.VISIBLE);
 
         firstToast = true;
