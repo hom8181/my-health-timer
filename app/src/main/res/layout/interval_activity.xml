@@ -25,6 +25,18 @@
         </Button>
 
         <Button
+            android:id="@+id/stop_restart_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="다시 시작"
+            android:visibility="gone"
+            android:layout_marginEnd="10dp"
+            tools:ignore="HardcodedText"
+            android:layout_marginRight="10dp">
+        </Button>
+
+        <Button
             android:id="@+id/reset_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
