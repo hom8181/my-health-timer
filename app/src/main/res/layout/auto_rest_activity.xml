@@ -19,7 +19,7 @@
             android:layout_gravity="center_horizontal"
             android:text="휴식 시간 설정"
             android:layout_marginEnd="10dp"
-            tools:ignore="HardcodedText"
+            tools:ignore="ButtonStyle,HardcodedText"
             android:layout_marginRight="10dp">
         </Button>
 
@@ -30,7 +30,7 @@
             android:layout_gravity="center_horizontal"
             android:text="초기화"
             android:layout_marginEnd="10dp"
-            tools:ignore="HardcodedText"
+            tools:ignore="ButtonStyle,HardcodedText"
             android:layout_marginRight="10dp">
         </Button>
 
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="50dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints">
@@ -90,7 +90,7 @@
             android:gravity="center"
             android:layout_marginStart="15dp"
             android:width="250dp"
-            tools:ignore="HardcodedText,UnusedAttribute"
+            tools:ignore="ButtonStyle,HardcodedText,UnusedAttribute"
             android:backgroundTint="@color/green"
             android:layout_marginLeft="15dp">
         </Button>
@@ -104,7 +104,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_marginStart="15dp"
-            tools:ignore="HardcodedText"
+            tools:ignore="ButtonStyle,HardcodedText"
             android:visibility="gone"
             android:layout_marginLeft="15dp">
         </Button>
@@ -118,13 +118,11 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_marginStart="15dp"
-            tools:ignore="HardcodedText,UnusedAttribute"
+            tools:ignore="ButtonStyle,HardcodedText,UnusedAttribute"
             android:visibility="gone"
             android:backgroundTint="@color/red"
             android:layout_marginLeft="15dp">
         </Button>
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -174,6 +172,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
+        android:layout_marginBottom="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/list_text_info">
@@ -186,5 +185,15 @@
             android:scrollbars="vertical"
             tools:ignore="AdapterViewChildren,NestedScrolling" />
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include layout="@layout/activity_bottom_bar" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
