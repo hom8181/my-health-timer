@@ -2,6 +2,7 @@ package com.example.myhealth;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,12 +13,14 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myhealth.domain.ExerciseSetDto;
@@ -41,7 +44,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private TextView mRestTime;
 
     private int minutePick = 0;
-    private int secondPick = 5;
+    private int secondPick = 30;
 
     private long restMillisecond = (minutePick * 60 + secondPick) * 1000;
 
@@ -57,6 +60,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
     private ListView listView;
 
+    private boolean exerciseIng = false;
+
     @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +71,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setTitle("자동 휴식 모드");
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
@@ -86,6 +90,14 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         restTimeSettingButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
+        LinearLayout modeMain = findViewById(R.id.mode_main);
+        LinearLayout modeAutoRest = findViewById(R.id.mode_auto_rest);
+        LinearLayout modeInterval = findViewById(R.id.mode_interval);
+
+        modeMain.setOnClickListener(this);
+        modeAutoRest.setOnClickListener(this);
+        modeInterval.setOnClickListener(this);
+
         mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
 
         mRestTime.setOnClickListener(view -> {
@@ -101,6 +113,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.exercise_start_btn:
+                exerciseIng = true;
                 setTimeAble = false;
 
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
@@ -134,8 +147,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                                 originalToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
                                 originalToast.show();
                             } else {
-
-
                                 // 원래의 toast를 cancel하고 새로 toast를 띄움
                                 originalToast.cancel();
                                 newToast = Toast.makeText(AutoRestActivity.this, millisecond / 1000 + "초 후 운동이 시작됩니다.", Toast.LENGTH_SHORT);
@@ -168,6 +179,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
 
                 break;
             case R.id.reset_btn:
+                exerciseIng = false;
+
                 if (countDownTimer != null) {
                     countDownTimer.cancel();
                 }
@@ -190,6 +203,56 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 listView.setAdapter(null);
 
                 exerciseSetList.clear();
+                break;
+
+            case R.id.mode_main:
+                if (exerciseIng) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("안내");
+                    builder.setMessage("운동중 이시라면 운동 기록이 날라가게 됩니다. \n이동하시겠습니까?");
+                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+                    builder.setPositiveButton("이동", (dialogInterface, i) -> {
+                        Intent mainAIntent = new Intent(AutoRestActivity.this, MainActivity.class);
+                        startActivity(mainAIntent);
+                        finish();
+                    });
+
+                    builder.setNegativeButton("취소", (dialogInterface, i) -> Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show());
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Intent mainAIntent = new Intent(this, MainActivity.class);
+                    startActivity(mainAIntent);
+                    finish();
+                }
+                break;
+
+            case R.id.mode_auto_rest:
+                Toast.makeText(this, "현재 자동 휴식 모드 입니다.", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.mode_interval:
+                if (exerciseIng) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("안내");
+                    builder.setMessage("운동중 이시라면 운동 기록이 날라가게 됩니다. \n이동하시겠습니까?");
+                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+                    builder.setPositiveButton("이동", (dialogInterface, i) -> {
+                        Intent intervalIntent = new Intent(AutoRestActivity.this, IntervalActivity.class);
+                        startActivity(intervalIntent);
+                        finish();
+                    });
+
+                    builder.setNegativeButton("취소", (dialogInterface, i) -> Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show());
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Intent intervalIntent = new Intent(this, IntervalActivity.class);
+                    startActivity(intervalIntent);
+                    finish();
+                }
                 break;
         }
     }

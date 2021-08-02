@@ -7,9 +7,12 @@ import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myhealth.domain.ExerciseSetDto;
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ListView listView;
 
+    private boolean exerciseIng = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
         Button resetButton = findViewById(R.id.reset_btn);
-        Button moveRestActivityButton = findViewById(R.id.move_auto_rest_btn);
 
         mExerciseTime = findViewById(R.id.exercise_time);
         mRestTime = findViewById(R.id.rest_time);
@@ -54,11 +58,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         restStartButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
 
-        // 자동 휴식 activity로 이동
-        moveRestActivityButton.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AutoRestActivity.class);
-            startActivity(intent);
-        });
+        LinearLayout modeMain = findViewById(R.id.mode_main);
+        LinearLayout modeAutoRest = findViewById(R.id.mode_auto_rest);
+        LinearLayout modeInterval = findViewById(R.id.mode_interval);
+
+        modeMain.setOnClickListener(this);
+        modeAutoRest.setOnClickListener(this);
+        modeInterval.setOnClickListener(this);
+
     }
 
     @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
@@ -66,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.exercise_start_btn:
+                exerciseIng = true;
+
                 if (exerciseSet == 0) {
                     restStartButton.setText("1세트 운동 완료 & 휴식 시작");
                 }
@@ -122,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.reset_btn:
+                exerciseIng = false;
+
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.stop();
 
@@ -138,6 +149,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 exerciseSetList.clear();
                 break;
+
+            case R.id.mode_main:
+                Toast.makeText(this, "현재 메인모드 입니다.", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.mode_auto_rest:
+                if (exerciseIng) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("안내");
+                    builder.setMessage("운동중 이시라면 운동 기록이 날라가게 됩니다. \n이동하시겠습니까?");
+                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+                    builder.setPositiveButton("이동", (dialogInterface, i) -> {
+                        Intent autoRestIntent = new Intent(MainActivity.this, AutoRestActivity.class);
+                        startActivity(autoRestIntent);
+                        finish();
+                    });
+
+                    builder.setNegativeButton("취소", (dialogInterface, i) -> Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show());
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Intent autoRestIntent = new Intent(this, AutoRestActivity.class);
+                    startActivity(autoRestIntent);
+                    finish();
+                }
+                break;
+
+            case R.id.mode_interval:
+                if (exerciseIng) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("안내");
+                    builder.setMessage("운동중 이시라면 운동 기록이 날라가게 됩니다. \n이동하시겠습니까?");
+                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+                    builder.setPositiveButton("이동", (dialogInterface, i) -> {
+                        Intent intervalIntent = new Intent(MainActivity.this, IntervalActivity.class);
+                        startActivity(intervalIntent);
+                        finish();
+                    });
+
+                    builder.setNegativeButton("취소", (dialogInterface, i) -> Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show());
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Intent intervalIntent = new Intent(this, IntervalActivity.class);
+                    startActivity(intervalIntent);
+                    finish();
+                }
+                break;
         }
     }
 
@@ -147,6 +208,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mExerciseTime.stop();
         mRestTime.stop();
     }
-
 
 }

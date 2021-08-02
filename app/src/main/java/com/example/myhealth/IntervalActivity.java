@@ -2,6 +2,7 @@ package com.example.myhealth;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -10,12 +11,14 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myhealth.domain.EnumExerciseOrRest;
@@ -39,11 +42,11 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     private TextView mExerciseTime;
     private TextView mRestTime;
 
-    private int restMinutePick = 0;
-    private int restSecondPick = 3;
+    private int restMinutePick = 1;
+    private int restSecondPick = 0;
 
-    private int exerciseMinutePick = 0;
-    private int exerciseSecondPick = 4;
+    private int exerciseMinutePick = 1;
+    private int exerciseSecondPick = 0;
 
     private long restMillisecond = (restMinutePick * 60 + restSecondPick) * 1000;
     private long exerciseMillisecond = (exerciseMinutePick * 60 + exerciseSecondPick) * 1000;
@@ -56,6 +59,8 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
     private boolean firstToast = true;
     private boolean setTimeAble = true;
+
+    private boolean exerciseIng = false;
 
     private EnumExerciseOrRest enumExerciseOrRest;
 
@@ -74,7 +79,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setTitle("인터벌 트레이닝");
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         exerciseIngButton = findViewById(R.id.exercise_ing_btn);
@@ -94,6 +99,14 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         stopIntervalBtn.setOnClickListener(this);
         stopRestartButton.setOnClickListener(this);
         resetButton.setOnClickListener(this);
+
+        LinearLayout modeMain = findViewById(R.id.mode_main);
+        LinearLayout modeAutoRest = findViewById(R.id.mode_auto_rest);
+        LinearLayout modeInterval = findViewById(R.id.mode_interval);
+
+        modeMain.setOnClickListener(this);
+        modeAutoRest.setOnClickListener(this);
+        modeInterval.setOnClickListener(this);
 
         mExerciseTime.setText(Utils.viewTime(exerciseMillisecond / 1000));
         mExerciseTime.setOnClickListener(view -> {
@@ -116,6 +129,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.exercise_start_btn:
+                exerciseIng = true;
                 setTimeAble = false;
 
                 exerciseStartButton.setVisibility(View.GONE);
@@ -170,6 +184,8 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 }.start();
                 break;
             case R.id.reset_btn:
+                exerciseIng = false;
+
                 if (exerciseCountDownTimer != null) {
                     exerciseCountDownTimer.cancel();
                 }
@@ -295,6 +311,55 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                         }
                     }.start();
                 }
+                break;
+
+            case R.id.mode_main:
+                if (exerciseIng) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("안내");
+                    builder.setMessage("운동중 이시라면 운동 기록이 날라가게 됩니다. \n이동하시겠습니까?");
+                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+                    builder.setPositiveButton("이동", (dialogInterface, i) -> {
+                        Intent mainAIntent = new Intent(IntervalActivity.this, MainActivity.class);
+                        startActivity(mainAIntent);
+                        finish();
+                    });
+
+                    builder.setNegativeButton("취소", (dialogInterface, i) -> Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show());
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Intent mainAIntent = new Intent(this, MainActivity.class);
+                    startActivity(mainAIntent);
+                    finish();
+                }
+                break;
+
+            case R.id.mode_auto_rest:
+                if (exerciseIng) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("안내");
+                    builder.setMessage("운동중 이시라면 운동 기록이 날라가게 됩니다. \n이동하시겠습니까?");
+                    builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+                    builder.setPositiveButton("이동", (dialogInterface, i) -> {
+                        Intent autoRestIntent = new Intent(IntervalActivity.this, AutoRestActivity.class);
+                        startActivity(autoRestIntent);
+                        finish();
+                    });
+
+                    builder.setNegativeButton("취소", (dialogInterface, i) -> Toast.makeText(getApplicationContext(), "취소", Toast.LENGTH_SHORT).show());
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Intent autoRestIntent = new Intent(this, AutoRestActivity.class);
+                    startActivity(autoRestIntent);
+                    finish();
+                }
+
+            case R.id.mode_interval:
+                Toast.makeText(this, "현재 인터벌 모드 입니다.", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -524,6 +589,18 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
             numberPickerDialog.dismiss();
         });
         cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
+    }
+
+    // 앱 종료시 Chronometer stop
+    public void onDestroy() {
+        super.onDestroy();
+        if (exerciseCountDownTimer != null) {
+            exerciseCountDownTimer.cancel();
+        }
+
+        if (restCountDownTimer != null) {
+            restCountDownTimer.cancel();
+        }
     }
 
 }
