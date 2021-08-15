@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button exerciseStartButton;
     private Button restStartButton;
 
+    private TextView startText;
+
     private int exerciseSet = 0;
     private final List<ExerciseSetDto> exerciseSetList = new ArrayList<>();
 
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
         Button resetButton = findViewById(R.id.reset_btn);
+
+        startText = findViewById(R.id.start_text);
 
         mExerciseTime = findViewById(R.id.exercise_time);
         mRestTime = findViewById(R.id.rest_time);
@@ -77,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (exerciseSet == 0) {
                     restStartButton.setText("1세트 운동 완료 & 휴식 시작");
+
+                    Date date = new Date();
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+                    String nowTime = simpleDateFormat.format(date);
+                    startText.setText("운동 시작 시간 : " + nowTime);
                 }
                 if (exerciseSet > 0) {
                     long restTime = Utils.mathFloorTime(SystemClock.elapsedRealtime() - mRestTime.getBase());
@@ -138,6 +148,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 mRestTime.setBase(SystemClock.elapsedRealtime());
                 mRestTime.stop();
+
+                startText.setText("운동 시작 시간 : ");
 
                 exerciseSet = 0;
                 exerciseStartButton.setText("1세트 운동 시작");
