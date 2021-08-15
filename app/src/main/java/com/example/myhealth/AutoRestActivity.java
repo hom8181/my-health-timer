@@ -42,6 +42,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private int exerciseSet = 0;
 
     private TextView mRestTime;
+    private TextView startText;
 
     private int minutePick = 0;
     private int secondPick = 30;
@@ -82,6 +83,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         mExerciseTime = findViewById(R.id.exercise_time);
 
         mRestTime = findViewById(R.id.rest_time);
+        startText = findViewById(R.id.start_text);
 
         listView = findViewById(R.id.list);
 
@@ -115,6 +117,13 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
             case R.id.exercise_start_btn:
                 exerciseIng = true;
                 setTimeAble = false;
+
+                if (exerciseSet == 0) {
+                    Date date = new Date();
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+                    String nowTime = simpleDateFormat.format(date);
+                    startText.setText("운동 시작 시간 : " + nowTime);
+                }
 
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
                 mExerciseTime.start();
@@ -180,6 +189,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.reset_btn:
                 exerciseIng = false;
+                startText.setText("운동 시작 시간 : ");
 
                 if (countDownTimer != null) {
                     countDownTimer.cancel();
