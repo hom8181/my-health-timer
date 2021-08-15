@@ -20,7 +20,7 @@
             android:text="일시 중지"
             android:visibility="gone"
             android:layout_marginEnd="10dp"
-            tools:ignore="HardcodedText"
+            tools:ignore="ButtonStyle,HardcodedText"
             android:layout_marginRight="10dp">
         </Button>
 
@@ -32,7 +32,7 @@
             android:text="다시 시작"
             android:visibility="gone"
             android:layout_marginEnd="10dp"
-            tools:ignore="HardcodedText"
+            tools:ignore="ButtonStyle,HardcodedText"
             android:layout_marginRight="10dp">
         </Button>
 
@@ -43,7 +43,7 @@
             android:layout_gravity="center_horizontal"
             android:text="초기화"
             android:layout_marginEnd="10dp"
-            tools:ignore="HardcodedText"
+            tools:ignore="ButtonStyle,HardcodedText"
             android:layout_marginRight="10dp">
         </Button>
 
@@ -139,9 +139,20 @@
             android:backgroundTint="@color/red"
             android:layout_marginLeft="15dp">
         </Button>
-
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/start_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="운동 시작 시간 : "
+        app:layout_constraintBottom_toTopOf="@+id/list_text_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_btn"
+        tools:ignore="HardcodedText" />
 
     <LinearLayout
         android:id="@+id/list_text_info"
@@ -150,7 +161,7 @@
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/start_btn">
+        app:layout_constraintTop_toBottomOf="@id/start_text">
 
         <TextView
             android:layout_width="wrap_content"

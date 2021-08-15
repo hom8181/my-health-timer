@@ -41,6 +41,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
     private TextView mExerciseTime;
     private TextView mRestTime;
+    private TextView startText;
 
     private int restMinutePick = 1;
     private int restSecondPick = 0;
@@ -92,6 +93,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
         mExerciseTime = findViewById(R.id.exercise_time);
 
         mRestTime = findViewById(R.id.rest_time);
+        startText = findViewById(R.id.start_text);
 
         listView = findViewById(R.id.list);
 
@@ -141,6 +143,13 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
 
                 enumExerciseOrRest = EnumExerciseOrRest.EXERCISE;
 
+                if (exerciseSet == 0) {
+                    Date date = new Date();
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+                    String nowTime = simpleDateFormat.format(date);
+                    startText.setText("운동 시작 시간 : " + nowTime);
+                }
+
                 exerciseCountDownTimer = new CountDownTimer(exerciseMillisecond, 1000) {
                     @SuppressLint("SetTextI18n")
                     @Override
@@ -185,6 +194,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.reset_btn:
                 exerciseIng = false;
+                startText.setText("운동 시작 시간 : ");
 
                 if (exerciseCountDownTimer != null) {
                     exerciseCountDownTimer.cancel();
