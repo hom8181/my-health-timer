@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Date date = new Date();
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
                     String nowTime = simpleDateFormat.format(date);
-                    startText.setText("운동 시작 시간 : " + nowTime);
+                    startText.setText("운동 시작/진행 시간 : " + nowTime);
                 }
                 if (exerciseSet > 0) {
                     long restTime = Utils.mathFloorTime(SystemClock.elapsedRealtime() - mRestTime.getBase());
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mRestTime.setBase(SystemClock.elapsedRealtime());
                 mRestTime.stop();
 
-                startText.setText("운동 시작 시간 : ");
+                startText.setText("운동 시작/진행 시간 : ");
 
                 exerciseSet = 0;
                 exerciseStartButton.setText("1세트 운동 시작");
