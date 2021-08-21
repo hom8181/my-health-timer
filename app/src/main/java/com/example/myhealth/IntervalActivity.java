@@ -8,9 +8,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -30,6 +32,8 @@ import java.util.Date;
 import java.util.List;
 
 public class IntervalActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private Chronometer restIngChronometer;
 
     private Button exerciseStartButton;
     private Button exerciseIngButton;
@@ -76,6 +80,8 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.interval_activity);
+
+        restIngChronometer = findViewById(R.id.exercise_ing_time);
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -148,6 +154,9 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
                     String nowTime = simpleDateFormat.format(date);
                     startText.setText("운동 시작 시간 : " + nowTime);
+
+                    restIngChronometer.setBase(SystemClock.elapsedRealtime());
+                    restIngChronometer.start();
                 }
 
                 exerciseCountDownTimer = new CountDownTimer(exerciseMillisecond, 1000) {
@@ -194,7 +203,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.reset_btn:
                 exerciseIng = false;
-                startText.setText("운동 시작 시간 : ");
+                startText.setText("운동 시작 시간 : 00:00");
 
                 if (exerciseCountDownTimer != null) {
                     exerciseCountDownTimer.cancel();
@@ -221,6 +230,11 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
                 listView.setAdapter(null);
 
                 exerciseSetList.clear();
+
+                if (restIngChronometer != null) {
+                    restIngChronometer.setBase(SystemClock.elapsedRealtime());
+                    restIngChronometer.stop();
+                }
                 break;
             case R.id.stop_time_btn:
                 stopIntervalBtn.setVisibility(View.GONE);
@@ -604,6 +618,7 @@ public class IntervalActivity extends AppCompatActivity implements View.OnClickL
     // 앱 종료시 Chronometer stop
     public void onDestroy() {
         super.onDestroy();
+        restIngChronometer.stop();
         if (exerciseCountDownTimer != null) {
             exerciseCountDownTimer.cancel();
         }

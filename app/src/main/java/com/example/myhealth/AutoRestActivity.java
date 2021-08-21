@@ -33,6 +33,7 @@ import java.util.List;
 public class AutoRestActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Chronometer mExerciseTime;
+    private Chronometer restIngChronometer;
 
     private Button exerciseStartButton;
     private Button restStartButton;
@@ -73,6 +74,8 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         assert actionBar != null;
         actionBar.setTitle("자동 휴식 모드");
         actionBar.setDisplayHomeAsUpEnabled(false);
+
+        restIngChronometer = findViewById(R.id.exercise_ing_time);
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
@@ -123,6 +126,9 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
                     String nowTime = simpleDateFormat.format(date);
                     startText.setText("운동 시작 시간 : " + nowTime);
+
+                    restIngChronometer.setBase(SystemClock.elapsedRealtime());
+                    restIngChronometer.start();
                 }
 
                 mExerciseTime.setBase(SystemClock.elapsedRealtime());
@@ -189,7 +195,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.reset_btn:
                 exerciseIng = false;
-                startText.setText("운동 시작 시간 : ");
+                startText.setText("운동 시작 시간 : 00:00");
 
                 if (countDownTimer != null) {
                     countDownTimer.cancel();
@@ -213,6 +219,11 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
                 listView.setAdapter(null);
 
                 exerciseSetList.clear();
+
+                if (restIngChronometer != null) {
+                    restIngChronometer.setBase(SystemClock.elapsedRealtime());
+                    restIngChronometer.stop();
+                }
                 break;
 
             case R.id.mode_main:
@@ -356,6 +367,7 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     // 앱 종료시 Chronometer stop
     public void onDestroy() {
         super.onDestroy();
+        restIngChronometer.stop();
         mExerciseTime.stop();
     }
 

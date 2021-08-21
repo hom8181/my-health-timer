@@ -26,6 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Chronometer mExerciseTime, mRestTime;
+    private Chronometer restIngChronometer;
 
     private Button exerciseStartButton;
     private Button restStartButton;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setTitle("세트 타이머");
+
+        restIngChronometer = findViewById(R.id.exercise_ing_time);
 
         exerciseStartButton = findViewById(R.id.exercise_start_btn);
         restStartButton = findViewById(R.id.rest_start_btn);
@@ -86,7 +89,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Date date = new Date();
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
                     String nowTime = simpleDateFormat.format(date);
-                    startText.setText("운동 시작/진행 시간 : " + nowTime);
+                    startText.setText("운동 시작 시간 : " + nowTime);
+
+                    restIngChronometer.setBase(SystemClock.elapsedRealtime());
+                    restIngChronometer.start();
                 }
                 if (exerciseSet > 0) {
                     long restTime = Utils.mathFloorTime(SystemClock.elapsedRealtime() - mRestTime.getBase());
@@ -149,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mRestTime.setBase(SystemClock.elapsedRealtime());
                 mRestTime.stop();
 
-                startText.setText("운동 시작/진행 시간 : ");
+                startText.setText("운동 시작 시간 : 00:00");
 
                 exerciseSet = 0;
                 exerciseStartButton.setText("1세트 운동 시작");
@@ -160,6 +166,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 listView.setAdapter(null);
 
                 exerciseSetList.clear();
+
+                if (restIngChronometer != null) {
+                    restIngChronometer.setBase(SystemClock.elapsedRealtime());
+                    restIngChronometer.stop();
+                }
                 break;
 
             case R.id.mode_main:
@@ -219,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         mExerciseTime.stop();
         mRestTime.stop();
+        restIngChronometer.stop();
     }
 
 }
