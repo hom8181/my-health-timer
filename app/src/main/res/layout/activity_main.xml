@@ -22,7 +22,6 @@
             android:layout_marginRight="10dp"
             android:text="초기화"
             tools:ignore="ButtonStyle,HardcodedText" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -91,8 +90,6 @@
             android:text="운동 완료 &amp; 휴식 시작"
             android:visibility="gone"
             tools:ignore="ButtonStyle,HardcodedText,UnusedAttribute" />
-
-
     </LinearLayout>
 
 
@@ -202,8 +199,5 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <include layout="@layout/activity_bottom_bar" />
-
     </LinearLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
