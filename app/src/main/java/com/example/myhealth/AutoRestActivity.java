@@ -104,7 +104,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         modeInterval.setOnClickListener(this);
 
         mRestTime.setText(Utils.viewTime(restMillisecond / 1000));
-
         mRestTime.setOnClickListener(view -> {
             if (exerciseSet == 0 && setTimeAble) {
                 setRestTime();
@@ -363,13 +362,11 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
         cancelButton.setOnClickListener(v -> numberPickerDialog.dismiss());
     }
 
-
     // 앱 종료시 Chronometer stop
     public void onDestroy() {
         super.onDestroy();
         restIngChronometer.stop();
         mExerciseTime.stop();
     }
-
 
 }
