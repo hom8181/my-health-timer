@@ -36,11 +36,10 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private Chronometer restIngChronometer;
 
     private Button exerciseStartButton, restStartButton, restIngButton, restTimeSettingButton;
-
-    private int exerciseSet = 0;
-
+    private ListView listView;
     private TextView mRestTime,startText;
 
+    private int exerciseSet = 0;
     private int minutePick = 0;
     private int secondPick = 30;
 
@@ -55,8 +54,6 @@ public class AutoRestActivity extends AppCompatActivity implements View.OnClickL
     private boolean exerciseIng = false;
 
     private final List<ExerciseSetDto> exerciseSetList = new ArrayList<>();
-
-    private ListView listView;
 
     @SuppressLint("CutPasteId")
     @Override
