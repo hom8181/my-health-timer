@@ -97,38 +97,47 @@
         android:id="@+id/start_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="15dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/list_text_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_btn">
 
-    <TextView
-        android:id="@+id/start_text"
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:text="운동 시작 시간 : 00:00"
-        tools:ignore="HardcodedText"/>
+        <TextView
+            android:id="@+id/start_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="운동 시작 시간 : 00:00"
+            tools:ignore="HardcodedText" />
 
-    <Chronometer
-        android:id="@+id/exercise_ing_time"
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:countDown="false"
-        android:gravity="start"
-        android:layout_gravity="center"
-        android:text="00:00"
-        android:textColor="@color/green"
-        app:layout_constraintBottom_toBottomOf="@+id/start_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/start_text"
-        tools:ignore="HardcodedText"
-        tools:targetApi="24" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="총 운동 시간 : "
+            tools:ignore="HardcodedText" />
+
+        <Chronometer
+            android:id="@+id/exercise_ing_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:countDown="false"
+            android:gravity="start"
+            android:text="00:00"
+            android:textColor="@color/green"
+            app:layout_constraintBottom_toBottomOf="@+id/start_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/start_text"
+            tools:ignore="HardcodedText"
+            tools:targetApi="24" />
     </LinearLayout>
 
     <LinearLayout
